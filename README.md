@@ -59,31 +59,41 @@ Useful but feels wrong. [The VM source text module is experimental](https://node
 
 ## TODO
 
-The APIs could use some work.
+- [ ] Sleek, consistent APIs for all modules
+- [ ] Separate submodules to separate packages
+- [ ] Forward JSDOM exports
 
 ### Tallahassee
 
-Request function may be too primitive. Would be easy to use node fetch but won't work with ReverseProxy which uses nock. 
+- [x] Containing requests to the app is currently done by setting up a `nock` scope around app origin which intercepts all reqs and proxies them through `supertest`. Not ideal for a bunch of reasons:
+	- [x] There is no built in way to clear a specific scope - [creative workaround](https://github.com/nock/nock/issues/1495#issuecomment-499594455)
+- [x] Scrap use of SuperTest. It's incorrectly used as an HTTP lib because of its ability to _make requests to a server_. Not having a listening server makes handling of client side requests messy. Calls to `XMLHttpRequest` needs to be intercepted and cookies will need to be handled manually. Also having the consumer starting / stopping their server once per test process would be more performant than doing it adhoc for each request.
+- [ ] Request function may be too primitive.
+- [ ] Use node fetch / Response (blocked by incompatibility with `nock`, used by `ReverseProxy`)
+- [ ] In-page navigation (clicking links etc.)
+- [ ] Reloading page
+- [ ] Unload browser and all its active jsdom instances
+
 
 ### Little Rock
 
-Convert to classes like JSDOM and the rest of the modules.
+- [x] Paint method behaves different when used on an element and a selector. Maybe it should. Styles applied to element will overwrite previous styles. Styles applied to selector will be appended to stylesheet.
+- [x] Scrolling behavior is **very** bare bones.
+- [x] Painting with both "stylesheets" and "elements" might not cause expected behavior. When scrolling an initial paint will read from all style sources: first stylesheet then element. Then compiled diff will be applied to element giving it the "importance" of inline styles.
+- [x] Convert to classes like JSDOM and the rest of the modules.
+- [x] Further implement web APIs such as `Element.scrollWidth` / `.scrollHeight` 
+- [x] Limitations on scroll coordinates.
+- [x] Automatic dimensions / coordinates. Maybe just paint method could take a list of elements with like `{ y: 'auto' }` and it could stack them along the supplied axis, optionally updating supplied parent. Would be nice if it could work with dynamically injected elements / stylesheets as well.
+- [ ] Means to emulate fixed / sticky / hidden layout.
+- [ ] Further implement web APIs such as setters for `Element.scrollLeft` / `.scrollTop`
+- [ ] Cache for layout calculation. Clear on paints and DOM updates. Mutation observer would work it it were synchronous.
 
-Means to emulate fixed / sticky / hidden layout.
-
-Further implement web APIs such as `Element.scrollLeft` / `.scrollTop` setters, limitations on scroll coordinates.
-
-Nice to have: automatic dimensions / coordinates. Maybe just paint method could take a list of elements with like `{ y: 'auto' }` and it could stack them along the supplied axis, optionally updating supplied parent. Would be nice if it could work with dynamically injected elements / stylesheets as well. 
-Emulating margins would be a hassle.
 
 ### Whichita
 
-Not using the ES module feature mustn't require the `--experimental-vm-modules` flag.
-
-VM evaluation based on script `type` attribute.
-
-Respecting `nomodule` like modern / legacy browser.
-
-Cache for FS operations.
-
-Remove dependency to `whatwg-fetch` while maintaining functionality of the `ReverseProxy` interface.
+- [x] Have not been able to make a working example using `fetch` along with [the community recommended polyfill](https://github.com/jsdom/jsdom/issues/1724#issuecomment-720727999). Did make it with another polyfill though :fingers_crossed:
+- [ ] Not using the ES module feature mustn't require the `--experimental-vm-modules` flag.
+- [ ] VM evaluation based on script `type` attribute.
+- [ ] Respecting `nomodule` like modern / legacy browser.
+- [ ] Cache for FS operations.
+- [ ] Remove dependency to `whatwg-fetch` while maintaining functionality of the `ReverseProxy` interface.
