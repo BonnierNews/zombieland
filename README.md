@@ -97,3 +97,4 @@ Useful but feels wrong. [The VM source text module is experimental](https://node
 - [ ] Respecting `nomodule` like modern / legacy browser.
 - [ ] Cache for FS operations.
 - [ ] Remove dependency to `whatwg-fetch` while maintaining functionality of the `ReverseProxy` interface.
+- [ ] Expose Module API -  `run` / `exports` / `execute` etc
