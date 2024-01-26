@@ -1,8 +1,8 @@
-# Zombieland draft
+# Zombieland
 
 Tallahassee is great! It's powerful enough to test your applications entire client side. It's "hackable" enough to emulate most scenarios / quirks occurring in an actual browser, making it suitable for both feature and unit style testing. It's lightweight enough to not be an excuse for skimping on testing.
 
-[However it isn't perfect...](https://github.com/BonnierNews/tallahassee/blob/next-draft/BACKGROUND.md)
+[However it isn't perfect...](https://github.com/BonnierNews/zombieland/blob/main/BACKGROUND.md)
 
 Proposed solution is to delegete all the DOM stuff to [jsdom](https://github.com/jsdom/jsdom). Other key features are built as **a toolkit of independent _single_ purpose extensions**.
 
