@@ -84,6 +84,7 @@ Useful but feels wrong. [The VM source text module is experimental](https://node
 - [ ] Means to emulate fixed / sticky / hidden layout.
 - [ ] Further implement web APIs such as setters for `Element.scrollLeft` / `.scrollTop`
 - [ ] Cache for layout calculation. Clear on paints and DOM updates. Mutation observer would work it it were synchronous.
+- [ ] Cleanup parent / child management - implicit relations to `Window` etc.
 
 ---
 
