@@ -84,7 +84,6 @@ Useful but feels wrong. [The VM source text module is experimental](https://node
 - [ ] Means to emulate fixed / sticky / hidden layout.
 - [ ] Further implement web APIs such as setters for `Element.scrollLeft` / `.scrollTop`
 - [ ] Cache for layout calculation. Clear on paints and DOM updates. Mutation observer would work it it were synchronous.
-- [ ] Cleanup parent / child management - implicit relations to `Window` etc.
 
 ---
 
@@ -95,6 +94,7 @@ Useful but feels wrong. [The VM source text module is experimental](https://node
 - [x] Further implement web APIs such as `Element.scrollWidth` / `.scrollHeight` 
 - [x] Limitations on scroll coordinates.
 - [x] Automatic dimensions / coordinates. Maybe just paint method could take a list of elements with like `{ y: 'auto' }` and it could stack them along the supplied axis, optionally updating supplied parent. Would be nice if it could work with dynamically injected elements / stylesheets as well.
+- [x] Cleanup parent / child management - implicit relations to `Window` etc.
 
 ### Whichita
 
