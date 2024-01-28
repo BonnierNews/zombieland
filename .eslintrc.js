@@ -70,5 +70,20 @@ module.exports = {
 		'space-unary-ops': [ 1, { words: true, nonwords: false } ],
 		'strict': [ 2, 'global' ],
 		'yoda': [ 1, 'never' ]
-	}
+	},
+	overrides: [ {
+		files: [ '**/*-test.js', 'test/**/*' ],
+		env: {
+			mocha: true
+		},
+		globals: {
+			And: true,
+			But: true,
+			Feature: true,
+			Given: true,
+			Scenario: true,
+			Then: true,
+			When: true
+		}
+	} ]
 };

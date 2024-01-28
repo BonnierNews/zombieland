@@ -1,9 +1,8 @@
 'use strict';
 
 const server = require('./server.js');
-const jsdom = require('jsdom');
 const setup = require('../helpers/setup.js');
-const { Browser, Resources } = require('../../../index.js');
+const { Browser, ReverseProxy, Resources, CookieJar } = require('../../../index.js');
 const { strict: assert } = require('assert');
 
 Feature('persistent cookies', () => {
@@ -13,7 +12,7 @@ Feature('persistent cookies', () => {
 	let reverseProxy;
 	before('set up reverse proxy', async () => {
 		const origin = await pendingServerOrigin;
-		reverseProxy = new Browser.ReverseProxy(url.origin, origin, {
+		reverseProxy = new ReverseProxy(url.origin, origin, {
 			'x-forwarded-proto': url.protocol.slice(0, -1),
 			'x-forwarded-host': url.hostname,
 		});
@@ -25,7 +24,7 @@ Feature('persistent cookies', () => {
 
 	let cookieJar;
 	Given('credentials in a cookie', () => {
-		cookieJar = new jsdom.CookieJar();
+		cookieJar = new CookieJar();
 		cookieJar.setCookieSync('loggedIn=1; HttpOnly', url.href);
 	});
 
