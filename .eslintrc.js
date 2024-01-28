@@ -72,7 +72,7 @@ module.exports = {
 		'yoda': [ 1, 'never' ]
 	},
 	overrides: [ {
-		files: [ '**/*-test.js', 'test/**/*' ],
+		files: [ '**/*-test.js', 'examples/**/*' ],
 		env: {
 			mocha: true
 		},

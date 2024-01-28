@@ -1,6 +1,6 @@
 'use strict';
 
-const { Browser, Resources } = require('../../../index.js');
+const { Browser, Resources } = require('../../index.js');
 const { strict: assert } = require('assert');
 const server = require('./server.js');
 const path = require('path');

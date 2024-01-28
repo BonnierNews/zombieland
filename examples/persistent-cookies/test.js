@@ -2,7 +2,7 @@
 
 const server = require('./server.js');
 const setup = require('../helpers/setup.js');
-const { Browser, ReverseProxy, Resources, CookieJar } = require('../../../index.js');
+const { Browser, ReverseProxy, Resources, CookieJar } = require('../../index.js');
 const { strict: assert } = require('assert');
 
 Feature('persistent cookies', () => {
