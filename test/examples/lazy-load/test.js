@@ -16,9 +16,8 @@ Feature('lazy load', () => {
 		const origin = await pendingServerOrigin;
 		dom = await new Browser(origin)
 			.navigateTo('/', {}, {
-				beforeParse (window) {
-					painter.init(window);
-				}
+				painter,
+				resources,
 			});
 	});
 
