@@ -27,7 +27,7 @@
 	},
 	"dependencies": {
 		"jsdom": "^23.0.1",
-		"nock": "^13.4.0",
+		"nock": "^14.0.0-beta.2",
 		"specificity": "^1.0.0",
 		"whatwg-fetch": "^3.6.20"
 	},

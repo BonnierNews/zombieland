@@ -6,6 +6,7 @@ const path = require('path');
 
 module.exports = http.createServer(async (req, res) => {
 	try {
+		console.log('serve', req.method, req.url);
 		const cookie = req.headers.cookie || '';
 		if (!cookie.includes('loggedIn=1')) {
 			return res.writeHead(401).end();

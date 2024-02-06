@@ -5,7 +5,7 @@ const setup = require('../helpers/setup.js');
 const { Browser, ReverseProxy, Resources, CookieJar } = require('../../index.js');
 const { strict: assert } = require('assert');
 
-Feature('persistent cookies', () => {
+Feature.only('persistent cookies', () => {
 	const pendingServerOrigin = setup(server);
 
 	const url = new URL('https://tallahassee.io/');
