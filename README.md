@@ -66,10 +66,8 @@ Useful but feels wrong. [The VM source text module is experimental](https://node
 ### Tallahassee
 
 - [x] Request function may be too primitive.
-- [ ] Use node `fetch` / `Response` (blocked by incompatibility with `nock`, used by `ReverseProxy`)
-  - [x] Basic use of Fetch API
+- [x] Use node `fetch` / `Response`
   - [ ] Stable version of Nock
-  - [ ] Bug with redirects and POST requests
 - [ ] In-page navigation (clicking links etc.)
 - [ ] Reloading page
 - [ ] Unload browser and all its active jsdom instances
