@@ -65,8 +65,12 @@ Useful but feels wrong. [The VM source text module is experimental](https://node
 
 ### Tallahassee
 
-- [ ] Request function may be too primitive.
+- [x] Request function may be too primitive.
 - [ ] Use node `fetch` / `Response` (blocked by incompatibility with `nock`, used by `ReverseProxy`)
+  - [x] Basic use of Fetch API
+  - [ ] Stable version of Nock
+  - [ ] Bug with accurate forwarding of request cookie
+  - [ ] Bug with redirects and POST requests
 - [ ] In-page navigation (clicking links etc.)
 - [ ] Reloading page
 - [ ] Unload browser and all its active jsdom instances
@@ -91,7 +95,7 @@ Useful but feels wrong. [The VM source text module is experimental](https://node
 - [x] Scrolling behavior is **very** bare bones.
 - [x] Painting with both "stylesheets" and "elements" might not cause expected behavior. When scrolling an initial paint will read from all style sources: first stylesheet then element. Then compiled diff will be applied to element giving it the "importance" of inline styles.
 - [x] Convert to classes like JSDOM and the rest of the modules.
-- [x] Further implement web APIs such as `Element.scrollWidth` / `.scrollHeight` 
+- [x] Further implement web APIs such as `Element.scrollWidth` / `.scrollHeight`
 - [x] Limitations on scroll coordinates.
 - [x] Automatic dimensions / coordinates. Maybe just paint method could take a list of elements with like `{ y: 'auto' }` and it could stack them along the supplied axis, optionally updating supplied parent. Would be nice if it could work with dynamically injected elements / stylesheets as well.
 - [x] Cleanup parent / child management - implicit relations to `Window` etc.
