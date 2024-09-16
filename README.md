@@ -69,7 +69,6 @@ Useful but feels wrong. [The VM source text module is experimental](https://node
 - [ ] Use node `fetch` / `Response` (blocked by incompatibility with `nock`, used by `ReverseProxy`)
   - [x] Basic use of Fetch API
   - [ ] Stable version of Nock
-  - [ ] Bug with accurate forwarding of request cookie
   - [ ] Bug with redirects and POST requests
 - [ ] In-page navigation (clicking links etc.)
 - [ ] Reloading page
