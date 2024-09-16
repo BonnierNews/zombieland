@@ -67,7 +67,7 @@ Useful but feels wrong. [The VM source text module is experimental](https://node
 
 - [x] Request function may be too primitive.
 - [x] Use node `fetch` / `Response`
-  - [ ] Stable version of Nock
+	- [ ] Stable version of Nock
 - [ ] In-page navigation (clicking links etc.)
 - [ ] Reloading page
 - [ ] Unload browser and all its active jsdom instances
