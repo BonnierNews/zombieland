@@ -1,9 +1,9 @@
 
 
-import { Browser, Painter, Resources } from '../../index.js';
 import assert from 'assert/strict';
 import server from './server.js';
 import setup from '../helpers/setup.js';
+import { Browser, Painter, Resources } from '../../index.js';
 
 Feature('lazy load', () => {
 	const pendingServerOrigin = setup(server);

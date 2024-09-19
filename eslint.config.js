@@ -67,6 +67,7 @@ export default [
 			'quote-props': [ 1, 'consistent-as-needed' ],
 			'semi-spacing': 1,
 			'semi': [ 2, 'always' ],
+			'sort-imports': [ 1, { ignoreCase: true, memberSyntaxSortOrder: [ 'none', 'all', 'single', 'multiple' ] } ],
 			'space-before-blocks': 1,
 			'space-before-function-paren': 1,
 			'space-infix-ops': 1,

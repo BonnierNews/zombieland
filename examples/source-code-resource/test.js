@@ -1,10 +1,10 @@
 
 
-import { Browser, Resources } from '../../index.js';
 import assert from 'assert/strict';
-import server from './server.js';
 import path from 'path';
+import server from './server.js';
 import setup from '../helpers/setup.js';
+import { Browser, Resources } from '../../index.js';
 
 Feature('source code resource', () => {
 	const pendingServerOrigin = setup(server);

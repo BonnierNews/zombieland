@@ -1,9 +1,9 @@
 
 
-import { Browser, Resources } from '../../index.js';
 import assert from 'assert/strict';
 import server from './server.js';
 import setup from '../helpers/setup.js';
+import { Browser, Resources } from '../../index.js';
 
 Feature('polyfill', () => {
 	const pendingServerOrigin = setup(server);
