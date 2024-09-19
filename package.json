@@ -34,10 +34,11 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.10.0",
+		"chai": "^5.1.1",
 		"eslint": "^9.10.0",
 		"globals": "^15.9.0",
 		"lodash.pick": "^4.4.0",
-		"mocha": "^10.2.0",
+		"mocha": "^10.7.3",
 		"mocha-cakes-2": "^3.3.0"
 	},
 	"bugs": {

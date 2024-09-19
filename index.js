@@ -1,4 +1,4 @@
 export * from 'jsdom';
-export * from './lib/tallahassee';
-export * from './lib/little-rock';
-export * from './lib/wichita';
+export * from './lib/tallahassee/index.js';
+export * from './lib/little-rock/index.js';
+export * from './lib/wichita/index.js';
