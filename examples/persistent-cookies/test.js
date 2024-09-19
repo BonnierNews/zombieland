@@ -1,9 +1,9 @@
 
 
-const server = require('./server.js');
-const setup = require('../helpers/setup.js');
-const { Browser, ReverseProxy, Resources, CookieJar } = require('../../index.js');
-const { strict: assert } = require('assert');
+import server from './server.js';
+import setup from '../helpers/setup.js';
+import { Browser, ReverseProxy, Resources, CookieJar } from '../../index.js';
+import assert from 'assert/strict';
 
 Feature('persistent cookies', () => {
 	const pendingServerOrigin = setup(server);

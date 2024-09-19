@@ -1,10 +1,10 @@
 
 
-const { Browser, Resources } = require('../../index.js');
-const { strict: assert } = require('assert');
-const server = require('./server.js');
-const path = require('path');
-const setup = require('../helpers/setup.js');
+import { Browser, Resources } from '../../index.js';
+import assert from 'assert/strict';
+import server from './server.js';
+import path from 'path';
+import setup from '../helpers/setup.js';
 
 Feature('source code resource', () => {
 	const pendingServerOrigin = setup(server);

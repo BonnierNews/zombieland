@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	'recursive': true,
 	'extension': [ 'js' ],
 	'spec': [ '**/*-test.js', 'examples/*/test.js' ],

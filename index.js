@@ -1,8 +1,4 @@
-
-
-module.exports = {
-	...require('jsdom'),
-	...require('./lib/tallahassee'),
-	...require('./lib/little-rock'),
-	...require('./lib/wichita'),
-};
+export * from 'jsdom';
+export * from './lib/tallahassee';
+export * from './lib/little-rock';
+export * from './lib/wichita';

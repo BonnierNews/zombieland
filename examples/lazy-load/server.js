@@ -1,10 +1,10 @@
 
 
-const http = require('http');
-const fs = require('fs/promises');
-const path = require('path');
+import http from 'http';
+import fs from 'fs/promises';
+import path from 'path';
 
-module.exports = http.createServer(async (req, res) => {
+export default http.createServer(async (req, res) => {
 	try {
 		const documentPath = path.resolve('./examples/lazy-load/document.html');
 		const document = await fs.readFile(documentPath, 'utf8');
