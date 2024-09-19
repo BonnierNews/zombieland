@@ -3,6 +3,7 @@
 	"version": "0.0.0",
 	"description": "Expressen client testing framework",
 	"main": "index.js",
+	"type": "module",
 	"license": "BSD-3-Clause",
 	"scripts": {
 		"test": "mocha",
@@ -32,7 +33,9 @@
 		"whatwg-fetch": "^3.6.20"
 	},
 	"devDependencies": {
-		"eslint": "^8.56.0",
+		"@eslint/js": "^9.10.0",
+		"eslint": "^9.10.0",
+		"globals": "^15.9.0",
 		"lodash.pick": "^4.4.0",
 		"mocha": "^10.2.0",
 		"mocha-cakes-2": "^3.3.0"
