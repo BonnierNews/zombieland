@@ -1,4 +1,4 @@
-import component from "./source-component.mjs";
+import component from './source-component.mjs';
 
-document.title += " | edit from source entry";
+document.title += ' | edit from source entry';
 component();

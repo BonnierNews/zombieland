@@ -1,4 +1,4 @@
-'use strict';
+
 
 const { Browser, Resources } = require('../../index.js');
 const { strict: assert } = require('assert');
