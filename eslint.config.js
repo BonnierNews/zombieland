@@ -3,14 +3,6 @@ import js from '@eslint/js';
 
 export default [
 	{
-		ignores: [
-			'examples/**/*.mjs'
-		],
-		languageOptions: {
-			globals: globals.node,
-		},
-	},
-	{
 		rules: {
 			...js.configs.recommended.rules,
 			'array-bracket-spacing': [ 1, 'always' ],
@@ -67,13 +59,28 @@ export default [
 			'quote-props': [ 1, 'consistent-as-needed' ],
 			'semi-spacing': 1,
 			'semi': [ 2, 'always' ],
-			'sort-imports': [ 1, { ignoreCase: true, memberSyntaxSortOrder: [ 'none', 'all', 'single', 'multiple' ] } ],
 			'space-before-blocks': 1,
 			'space-before-function-paren': 1,
 			'space-infix-ops': 1,
 			'space-unary-ops': [ 1, { words: true, nonwords: false } ],
 			'strict': [ 2, 'global' ],
-			'yoda': [ 1, 'never' ]
+			'yoda': [ 1, 'never' ],
+		},
+	},
+	{
+		ignores: [
+		  '**/*.mjs',
+		],
+		languageOptions: {
+			globals: globals.node,
+		},
+	},
+	{
+		files: [
+			'**/*.mjs',
+		],
+		languageOptions: {
+			globals: globals.browser,
 		},
 	},
 	{
@@ -92,14 +99,6 @@ export default [
   			Then: true,
   			When: true
 			}
-		},
-	},
-	{
-		files: [
-			'examples/**/*.mjs',
-		],
-		languageOptions: {
-			globals: globals.browser,
 		},
 	},
 ];
