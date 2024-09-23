@@ -3,9 +3,6 @@ import js from '@eslint/js';
 
 export default [
 	{
-		ignores: [
-			'index.cjs',
-		],
 		rules: {
 			...js.configs.recommended.rules,
 			'array-bracket-spacing': [ 1, 'always' ],
@@ -103,5 +100,10 @@ export default [
 				When: true,
 			}
 		},
+	},
+	{
+		ignores: [
+			'index.cjs',
+		],
 	},
 ];
