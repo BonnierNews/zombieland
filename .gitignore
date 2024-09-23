@@ -32,3 +32,5 @@ config/_revision
 
 /tmp
 .vscode
+
+index.cjs
