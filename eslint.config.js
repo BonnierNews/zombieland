@@ -3,6 +3,9 @@ import js from '@eslint/js';
 
 export default [
 	{
+		ignores: [
+			'index.cjs',
+		],
 		rules: {
 			...js.configs.recommended.rules,
 			'array-bracket-spacing': [ 1, 'always' ],
@@ -69,7 +72,7 @@ export default [
 	},
 	{
 		ignores: [
-		  '**/*.mjs',
+			'**/*.mjs',
 		],
 		languageOptions: {
 			globals: globals.node,
@@ -85,19 +88,19 @@ export default [
 	},
 	{
 		files: [
-		  '**/*-test.js',
+			'**/*-test.js',
 			'examples/**/*.js',
 		],
 		languageOptions: {
 			globals: {
 				...globals.mocha,
-  			And: true,
-  			But: true,
-  			Feature: true,
-  			Given: true,
-  			Scenario: true,
-  			Then: true,
-  			When: true
+				And: true,
+				But: true,
+				Feature: true,
+				Given: true,
+				Scenario: true,
+				Then: true,
+				When: true,
 			}
 		},
 	},
