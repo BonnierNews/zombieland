@@ -1,5 +1,3 @@
-
-
 import assert from 'assert/strict';
 import path from 'path';
 import server from './server.js';

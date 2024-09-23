@@ -1,5 +1,3 @@
-
-
 export default function setup (server) {
 	let resolvePendingServerOrigin;
 	const pendingServerOrigin = new Promise(resolve => {
