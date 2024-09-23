@@ -6,7 +6,7 @@
 	"type": "module",
 	"license": "BSD-3-Clause",
 	"scripts": {
-		"test": "mocha",
+		"test": "mocha 'lib/**/*-test.js' 'examples/**/test.js'",
 		"lint": "eslint ."
 	},
 	"engines": {
