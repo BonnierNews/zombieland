@@ -3,10 +3,16 @@
 	"version": "0.0.0",
 	"description": "Expressen client testing framework",
 	"main": "index.js",
+	"type": "module",
 	"license": "BSD-3-Clause",
+	"exports": {
+		"import": "./index.js",
+		"require": "./index.cjs"
+  },
 	"scripts": {
-		"test": "mocha",
-		"lint": "eslint ."
+		"test": "mocha 'lib/**/*-test.js' 'examples/**/test.js'",
+		"lint": "eslint .",
+		"prepack": "esbuild index.js --bundle --platform=node --packages=external --format=cjs --outdir=. --out-extension:.js=.cjs --define:import.meta.filename=__filename"
 	},
 	"engines": {
 		"node": ">=20"
@@ -32,9 +38,13 @@
 		"whatwg-fetch": "^3.6.20"
 	},
 	"devDependencies": {
-		"eslint": "^8.56.0",
-		"lodash.pick": "^4.4.0",
-		"mocha": "^10.2.0",
+		"@eslint/js": "^9.11.1",
+		"chai": "^5.1.1",
+		"esbuild": "^0.24.0",
+		"eslint": "^9.11.0",
+		"globals": "^15.9.0",
+		"lodash.pick": "^3.1.0",
+		"mocha": "^10.7.3",
 		"mocha-cakes-2": "^3.3.0"
 	},
 	"bugs": {

@@ -1,10 +1,8 @@
-'use strict';
-
-const { Browser, Resources } = require('../../index.js');
-const { strict: assert } = require('assert');
-const server = require('./server.js');
-const path = require('path');
-const setup = require('../helpers/setup.js');
+import assert from 'assert/strict';
+import path from 'path';
+import server from './server.js';
+import setup from '../helpers/setup.js';
+import { Browser, Resources } from '../../index.js';
 
 Feature('source code resource', () => {
 	const pendingServerOrigin = setup(server);
@@ -15,7 +13,7 @@ Feature('source code resource', () => {
 			resolveTag (tag) {
 				const src = tag.src || tag.dataset.sourceFile;
 				if (src?.endsWith('/dist-bundle.js')) {
-					return `file://${path.join(__dirname, 'source-entry.mjs')}`;
+					return import.meta.resolve(path.join(import.meta.dirname, 'source-entry.mjs'));
 				}
 			}
 		});

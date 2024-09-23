@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = function setup (server) {
+export default function setup (server) {
 	let resolvePendingServerOrigin;
 	const pendingServerOrigin = new Promise(resolve => {
 		resolvePendingServerOrigin = resolve;

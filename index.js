@@ -1,8 +1,4 @@
-'use strict';
-
-module.exports = {
-	...require('jsdom'),
-	...require('./lib/tallahassee'),
-	...require('./lib/little-rock'),
-	...require('./lib/wichita'),
-};
+export * from 'jsdom';
+export * from './lib/tallahassee/index.js';
+export * from './lib/little-rock/index.js';
+export * from './lib/wichita/index.js';

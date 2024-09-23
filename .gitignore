@@ -6,6 +6,7 @@ npm-debug.log
 .tern-port
 .tern-project
 .idea
+.zed
 *.iml
 
 # Compiled client resources
@@ -32,3 +33,5 @@ config/_revision
 
 /tmp
 .vscode
+
+index.cjs

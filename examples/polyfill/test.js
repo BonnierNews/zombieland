@@ -1,9 +1,7 @@
-'use strict';
-
-const { Browser, Resources } = require('../../index.js');
-const { strict: assert } = require('assert');
-const server = require('./server.js');
-const setup = require('../helpers/setup.js');
+import assert from 'assert/strict';
+import server from './server.js';
+import setup from '../helpers/setup.js';
+import { Browser, Resources } from '../../index.js';
 
 Feature('polyfill', () => {
 	const pendingServerOrigin = setup(server);
