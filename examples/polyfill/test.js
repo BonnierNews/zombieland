@@ -1,4 +1,4 @@
-import assert from 'assert/strict';
+import assert from 'node:assert/strict';
 import server from './server.js';
 import setup from '../helpers/setup.js';
 import { Browser, Resources } from '../../index.js';

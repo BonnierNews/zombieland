@@ -1,5 +1,5 @@
-import assert from 'assert/strict';
-import path from 'path';
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import server from './server.js';
 import setup from '../helpers/setup.js';
 import { Browser, Resources } from '../../index.js';

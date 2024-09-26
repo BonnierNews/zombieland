@@ -1,6 +1,6 @@
-import fs from 'fs/promises';
-import http from 'http';
-import path from 'path';
+import fs from 'node:fs/promises';
+import http from 'node:http';
+import path from 'node:path';
 
 export default http.createServer(async (req, res) => {
 	try {
