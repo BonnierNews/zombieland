@@ -61,6 +61,7 @@ Useful but feels wrong. [The VM source text module is experimental](https://node
 
 - [ ] Sleek, consistent APIs for all modules
 - [ ] Separate submodules to separate packages
+- [ ] Verified and tested CJS support
 - [x] Forward JSDOM exports
 
 ### Tallahassee
