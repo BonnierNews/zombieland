@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import server from './server.js';
 import setup from '../helpers/setup.js';
-import { Browser, Painter, Resources } from '../../index.js';
+import { Browser, Painter, ResourceLoader } from '../../index.js';
 
 Feature('lazy load', () => {
 	const pendingServerOrigin = setup(server);
@@ -9,7 +9,7 @@ Feature('lazy load', () => {
 	let painter, resources, dom;
 	before('load page', async () => {
 		painter = new Painter();
-		resources = new Resources();
+		resources = new ResourceLoader();
 
 		const origin = await pendingServerOrigin;
 		dom = await new Browser(origin)
