@@ -59,6 +59,6 @@ Feature('source code resource', () => {
 			'edit from source entry',
 			'edit from source component',
 			'edit from inline script',
-		].join(' | '));
+		].join(', '));
 	});
 });
