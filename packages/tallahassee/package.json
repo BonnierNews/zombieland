@@ -4,9 +4,6 @@
   "version": "0.0.1",
   "description": "",
   "main": "tallahassee.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "test": "mocha"
   },

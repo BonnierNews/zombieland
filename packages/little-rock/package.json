@@ -4,9 +4,6 @@
   "version": "0.0.1",
   "description": "",
   "main": "little-rock.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "test": "mocha"
   },

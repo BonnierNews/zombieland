@@ -6,6 +6,9 @@
   "main": "wichita.js",
   "author": "",
   "license": "MIT",
+  "scripts": {
+    "test": "mocha"
+  },
   "peerDependencies": {
     "jsdom": "^25.0.1"
   }
