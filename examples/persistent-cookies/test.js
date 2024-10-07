@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import server from './server.js';
 import setup from '../helpers/setup.js';
-import { Browser, CookieJar, Resources, ReverseProxy } from '../../index.js';
+import { Browser, CookieJar, Resources, ReverseProxy } from '../../zombieland.js';
 
 Feature('persistent cookies', () => {
 	const pendingServerOrigin = setup(server);

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import server from './server.js';
 import setup from '../helpers/setup.js';
-import { Browser, Resources } from '../../index.js';
+import { Browser, Resources } from '../../zombieland.js';
 
 Feature('polyfill', () => {
 	const pendingServerOrigin = setup(server);

@@ -1,18 +1,18 @@
 {
 	"name": "zombieland",
+	"type": "module",
 	"version": "0.0.0",
 	"description": "Expressen client testing framework",
-	"main": "index.js",
-	"type": "module",
+	"main": "zombieland.js",
 	"license": "BSD-3-Clause",
 	"exports": {
-		"import": "./index.js",
-		"require": "./index.cjs"
-  },
+		"import": "./zombieland.js",
+		"require": "./zombieland.cjs"
+	},
 	"scripts": {
-		"test": "mocha 'lib/**/*-test.js' 'examples/**/test.js'",
+		"test": "mocha 'packages/**/*-test.js' 'examples/**/test.js'",
 		"lint": "eslint .",
-		"prepack": "esbuild index.js --bundle --platform=node --packages=external --format=cjs --outdir=. --out-extension:.js=.cjs --define:import.meta.filename=__filename"
+		"prepack": "esbuild zombieland.js --bundle --platform=node --packages=external --format=cjs --outdir=. --out-extension:.js=.cjs --define:import.meta.filename=__filename"
 	},
 	"engines": {
 		"node": ">=20"
@@ -32,6 +32,9 @@
 		"url": "git://github.com/BonnierNews/zombieland.git"
 	},
 	"dependencies": {
+		"@zombieland/little-rock": "file:packages/little-rock",
+		"@zombieland/tallahassee": "file:packages/tallahassee",
+		"@zombieland/wichita": "file:packages/wichita",
 		"jsdom": "^23.0.1",
 		"nock": "^14.0.0-beta.13",
 		"specificity": "^1.0.0",
