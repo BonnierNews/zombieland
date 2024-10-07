@@ -1,12 +1,12 @@
 {
   "name": "@zombieland/wichita",
-	"type": "module",
+  "type": "module",
   "version": "0.0.1",
   "description": "",
   "main": "wichita.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "peerDependencies": {
+    "jsdom": "^25.0.1"
+  }
 }

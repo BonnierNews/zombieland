@@ -1,6 +1,6 @@
 {
   "name": "@zombieland/little-rock",
-	"type": "module",
+  "type": "module",
   "version": "0.0.1",
   "description": "",
   "main": "little-rock.js",
@@ -8,8 +8,14 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "specificity": "^1.0.0"
+  },
+  "peerDependencies": {
+    "jsdom": "^25.0.1"
+  }
 }
