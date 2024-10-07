@@ -4,7 +4,7 @@
 	"version": "0.0.0",
 	"description": "Expressen client testing framework",
 	"main": "zombieland.js",
-	"license": "BSD-3-Clause",
+	"license": "MIT",
 	"exports": {
 		"import": "./zombieland.js",
 		"require": "./zombieland.cjs"

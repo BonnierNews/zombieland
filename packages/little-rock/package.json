@@ -11,7 +11,7 @@
     "test": "mocha"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "specificity": "^1.0.0"
   },
