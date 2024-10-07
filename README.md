@@ -14,4 +14,5 @@ A set of extensions for [jsdom](https://github.com/jsdom/jsdom) to test web appl
 
 - [ ] Sleek, consistent APIs for all modules
 - [ ] Separate submodules to separate packages
-- [ ] Forward JSDOM exports
+- [ ] Verified and tested CJS support
+- [x] Forward JSDOM exports

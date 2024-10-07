@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import server from './server.js';
 import setup from '../helpers/setup.js';
-import { Browser, CookieJar, Resources, ReverseProxy } from '../../zombieland.js';
+import { Browser, ResourceLoader, ReverseProxy, jsdom } from '../../zombieland.js';
 
 Feature('persistent cookies', () => {
 	const pendingServerOrigin = setup(server);
@@ -22,14 +22,14 @@ Feature('persistent cookies', () => {
 
 	let cookieJar;
 	Given('credentials in a cookie', () => {
-		cookieJar = new CookieJar();
+		cookieJar = new jsdom.CookieJar();
 		cookieJar.setCookieSync('loggedIn=1; HttpOnly', url.href);
 	});
 
 	let browser, pendingDom, resources;
 	When('visiting a page requiring authentication', () => {
 		browser = new Browser(url.origin, cookieJar);
-		resources = new Resources();
+		resources = new ResourceLoader();
 		pendingDom = browser.navigateTo(url.href, {}, { resources });
 	});
 

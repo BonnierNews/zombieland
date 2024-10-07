@@ -13,7 +13,7 @@ Resolver enables "binding" script tags to files making the test suite less verbo
 - [ ] Not using the ES module feature mustn't require the `--experimental-vm-modules` flag.
 - [ ] VM evaluation based on script `type` attribute.
 - [ ] Respecting `nomodule` like modern / legacy browser.
-- [ ] Cache for FS operations.
-- [ ] Remove dependency to `whatwg-fetch` while maintaining functionality of the `ReverseProxy` interface.
-- [ ] Expose Module API -  `run` / `exports` / `execute` etc
+- [ ] Support for importing CJS modules in Script
+- [x] Expose Script exports
+- [x] Cache for FS operations.
 - [x] Have not been able to make a working example using `fetch` along with [the community recommended polyfill](https://github.com/jsdom/jsdom/issues/1724#issuecomment-720727999). Did make it with another polyfill though :fingers_crossed:

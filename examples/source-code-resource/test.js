@@ -2,14 +2,14 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import server from './server.js';
 import setup from '../helpers/setup.js';
-import { Browser, Resources } from '../../zombieland.js';
+import { Browser, ResourceLoader } from '../../zombieland.js';
 
 Feature('source code resource', () => {
 	const pendingServerOrigin = setup(server);
 
 	let resources;
 	Given('a source document', () => {
-		resources = new Resources({
+		resources = new ResourceLoader({
 			resolveTag (tag) {
 				const src = tag.src || tag.dataset.sourceFile;
 				if (src?.endsWith('/dist-bundle.js')) {
@@ -59,6 +59,6 @@ Feature('source code resource', () => {
 			'edit from source entry',
 			'edit from source component',
 			'edit from inline script',
-		].join(' | '));
+		].join(', '));
 	});
 });

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import server from './server.js';
 import setup from '../helpers/setup.js';
-import { Browser, Resources } from '../../zombieland.js';
+import { Browser, ResourceLoader } from '../../zombieland.js';
 
 Feature('polyfill', () => {
 	const pendingServerOrigin = setup(server);
@@ -14,7 +14,7 @@ Feature('polyfill', () => {
 				runScripts: 'dangerously',
 				beforeParse: window => {
 					assert.equal('fetch' in window, false);
-					Resources.polyfill(window);
+					ResourceLoader.polyfill(window);
 				},
 			});
 	});

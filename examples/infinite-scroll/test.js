@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import server from './server.js';
 import setup from '../helpers/setup.js';
-import { Browser, Painter, Resources } from '../../zombieland.js';
+import { Browser, Painter, ResourceLoader } from '../../zombieland.js';
 
 Feature('infinite scroll', () => {
 	const pendingServerOrigin = setup(server);
@@ -9,7 +9,7 @@ Feature('infinite scroll', () => {
 	let painter, resources, dom;
 	before('load page', async () => {
 		painter = new Painter();
-		resources = new Resources();
+		resources = new ResourceLoader();
 
 		const origin = await pendingServerOrigin;
 		dom = await new Browser(origin)
