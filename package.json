@@ -2,7 +2,7 @@
 	"name": "zombieland",
 	"type": "module",
 	"version": "0.0.0",
-	"description": "Expressen client testing framework",
+	"description": "",
 	"main": "zombieland.js",
 	"license": "MIT",
 	"exports": {
@@ -26,7 +26,7 @@
 		"MutationObserver",
 		"iframe"
 	],
-	"author": "Bonnier News",
+	"author": "Jonas Waldén",
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/BonnierNews/zombieland.git"
