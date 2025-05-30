@@ -14,7 +14,7 @@ describe('Script', () => {
 		});
 
 		it('evaluates code with imports', async () => {
-			const module = new Script('lib/wichita/test/script-test.js', `
+			const module = new Script(import.meta.filename, `
 				import component from './files/source-component.mjs';
 				import * as npmModule from 'assertion-error';
 				if (npmModule)
@@ -39,7 +39,7 @@ describe('Script', () => {
 		});
 
 		it('evaluates code from path', async () => {
-			const module = new Script('lib/wichita/test/files/source-entry.mjs');
+			const module = new Script(import.meta.dirname + '/files/source-entry.mjs');
 			const document = { title: 'initial value' };
 			await module.evaluate({ document });
 			assert.equal(document.title, 'initial value, edit from source entry, edit from source component');

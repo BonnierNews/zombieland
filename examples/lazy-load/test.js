@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import server from './server.js';
 import setup from '../helpers/setup.js';
-import { Browser, Painter, ResourceLoader } from '../../index.js';
+import { Browser, Painter, ResourceLoader } from '../../zombieland.js';
 
 Feature('lazy load', () => {
 	const pendingServerOrigin = setup(server);

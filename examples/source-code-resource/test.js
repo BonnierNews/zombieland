@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import server from './server.js';
 import setup from '../helpers/setup.js';
-import { Browser, ResourceLoader } from '../../index.js';
+import { Browser, ResourceLoader } from '../../zombieland.js';
 
 Feature('source code resource', () => {
 	const pendingServerOrigin = setup(server);

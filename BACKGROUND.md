@@ -1,8 +1,10 @@
-# It isn't perfect
+# Background
 
-No it isn't. Here are some of the larger issues with the current lib.
+[Tallahassee](https://github.com/BonnierNews/tallahassee) is great! It's powerful enough to test your applications entire client side. It's "hackable" enough to emulate most scenarios / quirks occurring in an actual browser, making it suitable for both feature and unit style testing. It's lightweight enough to not be an excuse for skimping on testing.
 
-## Incomplete implementation of DOM interfaces
+However it isn't perfect. Here are some of the larger issues with the current lib.
+
+### Incomplete implementation of DOM interfaces
 
 DOM interfaces have been implemented as needs have occurred with **varying** fidelity to the W3 spec.
 
@@ -14,7 +16,7 @@ Sprinkled in with the _sparse_ browser environment there are a lot of custom int
 
 It's unclear where the standard DOM ends and where Tallahassee begins.
 
-## Documentation
+### Documentation
 
 Is there one?
 
@@ -33,3 +35,16 @@ This makes it awkward to test a series of page loads.
 ## Proposed solution
 
 There is a tool that does **most** of what the Tallahassee code base tries to do - replicate a browser environment. It's called [jsdom](https://github.com/jsdom/jsdom). The rest can be built as a toolkit of independent extensions to jsdom - Zombieland.
+
+## Drawbacks
+
+### JSDOM
+JSDOM is kind of a black box compared to current Tallahassee browser environment. Read only properties are read only. Don't know if this is a big problem.
+
+It is not as fully featured as it appears. Polyfills are required for some basic functions, such as `fetch`.
+
+### "Independent _single_ purpose extensions"
+The intention of making each tool independent sounds like a good idea but is it? Could make the API's overly complex! Does anyone want / need a setup like JSDOM, Tallahasse and Little Rock but not Whichita?
+
+### Custom script executor
+Useful but feels wrong. [The VM source text module is experimental](https://nodejs.org/api/vm.html#vm_class_vm_sourcetextmodule).

@@ -1,0 +1,19 @@
+{
+  "name": "@zombieland/tallahassee",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "",
+  "main": "tallahassee.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "nock": "^14.0.0-beta.15",
+    "whatwg-fetch": "^3.6.20"
+  },
+  "peerDependencies": {
+    "jsdom": "^25.0.1"
+  }
+}

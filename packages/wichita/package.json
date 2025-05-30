@@ -1,0 +1,15 @@
+{
+  "name": "@zombieland/wichita",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "",
+  "main": "wichita.js",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "test": "mocha"
+  },
+  "peerDependencies": {
+    "jsdom": "^25.0.1"
+  }
+}
