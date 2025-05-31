@@ -1,0 +1,28 @@
+<!doctype>
+
+<nav>
+	<a href="#big-menu" role="button" label="Open big menu">≡</a>
+	<a href="/page-1">Page 1</a>
+	<a href="/page-2">Page 2</a>
+	<a href="/page-3">Page 3</a>
+</nav>
+
+…
+
+<dialog open>
+	<nav id="big-menu"></nav>
+</dialog>
+
+<script>
+	const bigMenuDialog = document.querySelector('dialog');
+	bigMenuDialog.close();
+
+	const bigMenuToggle = document.querySelector('a[href="#big-menu"]');
+	bigMenuToggle.addEventListener('click', openBigMenu);
+
+	function openBigMenu(event) {
+		event.preventDefault();
+		console.log('open', event.defaultPrevented)
+		bigMenuDialog.showModal();
+	}
+</script>

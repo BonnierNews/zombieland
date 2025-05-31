@@ -49,6 +49,7 @@ export default class Browser {
 			}),
 			cookieJar: this.cookieJar,
 			beforeParse: window => {
+				this.#applyNavigation(window);
 				jsdomConfig.resources?.beforeParse?.(window);
 				jsdomConfig.painter?.beforeParse(window);
 				jsdomConfig.beforeParse?.(window);
@@ -70,4 +71,36 @@ export default class Browser {
 			this.cookieJar.setCookieSync(directive, url.href || url);
 		}
 	}
+
+	#applyNavigation (window) {
+		const browser = this;
+		Object.defineProperties(window.Event.prototype, {
+			defaultPrevented: {
+				writable: true,
+			},
+			preventDefault: {
+				value: function () {
+					this.defaultPrevented = true;
+				}
+			}
+		});
+		Object.defineProperties(window.HTMLAnchorElement.prototype, {
+			click: {
+				value: function () {
+					return new Promise(resolve => {
+						window.addEventListener('click', event => {
+							console.log('a click');
+							if (event.defaultPrevented) return resolve(console.log(1));
+							console.log(2);
+							event.preventDefault();
+							resolve(browser.fetch(this.href));
+						}, { once: true });
+
+						this.dispatchEvent(new window.Event('click', { bubbles: true }));
+					});
+				}
+			}
+		});
+	}
+
 };
