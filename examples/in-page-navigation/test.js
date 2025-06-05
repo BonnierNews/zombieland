@@ -6,20 +6,20 @@ import { Browser } from '../../zombieland.js';
 Feature('in page navigation', () => {
 	const pendingServerOrigin = setup(server);
 
-	let dom;
+	let browser, dom;
 	before('load page', async () => {
 		const origin = await pendingServerOrigin;
-		dom = await new Browser(origin)
-			.navigateTo('/', {}, {
-				runScripts: 'dangerously',
-				beforeParse (window) {
-					Object.defineProperties(window.HTMLDialogElement.prototype, {
-						showModal: { value: dialogShowModal },
-						close: { value: dialogClose },
-						open: { get: dialogOpen, set: dialogOpen },
-					});
-				}
-			});
+		browser = new Browser(origin);
+		dom = await browser.navigateTo('/', {}, {
+			runScripts: 'dangerously',
+			beforeParse (window) {
+				Object.defineProperties(window.HTMLDialogElement.prototype, {
+					showModal: { value: dialogShowModal },
+					close: { value: dialogClose },
+					open: { get: dialogOpen, set: dialogOpen },
+				});
+			}
+		});
 
 		function dialogShowModal () {
 			this.open = true;
@@ -60,8 +60,9 @@ Feature('in page navigation', () => {
 
 		let pendingResponse, pageHidden = false;
 		When('clicking the link', () => {
+			pendingResponse = browser.getPendingNavigation(dom);
 			dom.window.addEventListener('pagehide', () => pageHidden = true, { once: true });
-			pendingResponse = buttonLink.click();
+			buttonLink.click();
 		});
 
 		Then('page remains open', () => {
@@ -87,8 +88,9 @@ Feature('in page navigation', () => {
 
 		let pendingResponse, pageHidden = false;
 		When('clicking the link', () => {
+			pendingResponse = browser.getPendingNavigation(dom);
 			dom.window.addEventListener('pagehide', () => pageHidden = true, { once: true });
-			pendingResponse = regularLink.click();
+			regularLink.click();
 		});
 
 		Then('page is closed', () => {

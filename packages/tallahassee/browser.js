@@ -49,10 +49,33 @@ export default class Browser {
 			}),
 			cookieJar: this.cookieJar,
 			beforeParse: window => {
-				this.#applyNavigation(window);
+				this.beforeParse(window);
 				jsdomConfig.resources?.beforeParse?.(window);
 				jsdomConfig.painter?.beforeParse(window);
 				jsdomConfig.beforeParse?.(window);
+			}
+		});
+	}
+
+	getPendingNavigation (dom) {
+		const browser = this;
+
+		return new Promise(resolve => {
+			dom.window.addEventListener('click', catchLinkClick);
+
+			function catchLinkClick (event) {
+				const link = event.target.closest('a');
+				if (!link) return;
+
+				dom.window.removeEventListener(event.type, catchLinkClick);
+
+				if (event.defaultPrevented) return resolve();
+				return runDefault(event, link.href);
+			}
+
+			function runDefault (event, url, options) {
+				event.preventDefault();
+				resolve(browser.fetch(url, options));
 			}
 		});
 	}
@@ -72,8 +95,7 @@ export default class Browser {
 		}
 	}
 
-	#applyNavigation (window) {
-		const browser = this;
+	beforeParse (window) {
 		Object.defineProperties(window.Event.prototype, {
 			defaultPrevented: {
 				writable: true,
@@ -87,20 +109,9 @@ export default class Browser {
 		Object.defineProperties(window.HTMLAnchorElement.prototype, {
 			click: {
 				value: function () {
-					return new Promise(resolve => {
-						window.addEventListener('click', event => {
-							console.log('a click');
-							if (event.defaultPrevented) return resolve(console.log(1));
-							console.log(2);
-							event.preventDefault();
-							resolve(browser.fetch(this.href));
-						}, { once: true });
-
-						this.dispatchEvent(new window.Event('click', { bubbles: true }));
-					});
+					this.dispatchEvent(new window.Event('click', { bubbles: true }));
 				}
 			}
 		});
 	}
-
 };
