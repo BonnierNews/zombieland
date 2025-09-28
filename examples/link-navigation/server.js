@@ -4,7 +4,7 @@ import path from 'node:path';
 
 export default http.createServer(async (req, res) => {
 	try {
-		const documentPath = path.resolve('./examples/in-page-navigation/document.html');
+		const documentPath = path.resolve('./examples/link-navigation/document.html');
 		const document = await fs.readFile(documentPath, 'utf8');
 		res
 			.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })

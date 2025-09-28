@@ -42,6 +42,7 @@ export default class Browser {
 
 		return new jsdom.JSDOM(document, {
 			runScripts: 'outside-only',
+			pretendToBeVisual: true,
 			...jsdomConfig,
 			...(isResponse && {
 				url: response.url || undefined,
@@ -62,19 +63,35 @@ export default class Browser {
 
 		return new Promise(resolve => {
 			dom.window.addEventListener('click', catchLinkClick);
+			dom.window.addEventListener('submit', catchFormSubmit);
 
 			function catchLinkClick (event) {
 				const link = event.target.closest('a');
 				if (!link) return;
 
-				dom.window.removeEventListener(event.type, catchLinkClick);
-
-				if (event.defaultPrevented) return resolve();
 				return runDefault(event, link.href);
 			}
 
+			function catchFormSubmit (event) {
+				const form = event.target.closest('form');
+				if (!form) return;
+
+				return runDefault(event, form.action, {
+					method: form.method,
+					body: new dom.window.FormData(form, event.submitter),
+				});
+			}
+
 			function runDefault (event, url, options) {
+				if (event.defaultPrevented) {
+					dom.window.removeEventListener('click', catchLinkClick);
+					dom.window.removeEventListener('submit', catchFormSubmit);
+					return resolve(null);
+				}
+
 				event.preventDefault();
+				dom.window.dispatchEvent(new dom.window.Event('pagehide'));
+				dom.window.close();
 				resolve(browser.fetch(url, options));
 			}
 		});
