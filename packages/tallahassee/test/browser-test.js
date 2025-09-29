@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import Browser from '../browser.js';
 import nock from 'nock';
+import parseFormData from '../../../helpers/parse-form-data.js';
 
 describe('Browser', () => {
 	before(() => nock.disableNetConnect());
@@ -196,6 +197,83 @@ describe('Browser', () => {
 			const dom = await browser.load(pendingResponse);
 			assert.equal(dom.window.location.href, url.origin + '/xml-document');
 			assert.equal(dom.window.document.contentType, 'application/xml');
+		});
+	});
+
+	describe('.captureNavigation()', () => {
+		it('captures navigation from link', async () => {
+			nock(url.origin)
+				.get('/')
+				.reply(200, '<a href="/about">About</a>')
+				.get('/about')
+				.reply(200, '<title>About</title>');
+
+			const dom = await browser.navigateTo('/');
+			const link = dom.window.document.querySelector('a');
+			assert.ok(link, 'expected link');
+
+			const pendingResponse = browser.captureNavigation(dom);
+			assert(pendingResponse instanceof Promise, 'expected promise return value');
+
+			link.click();
+
+			const response = await pendingResponse;
+			assert(response instanceof Response, 'expected response');
+			assert.equal(response.status, 200);
+
+			const body = await response.text();
+			assert.equal(body, '<title>About</title>');
+		});
+
+		it('captures navigation from form', async () => {
+			nock(url.origin)
+				.get('/')
+				.times(2)
+				.reply(function () {
+					if (this.req.headers.cookie === 'logged-in=1') {
+						return [ 200, '<title>Welcome</title>' ];
+					}
+
+					return [ 200, `
+						<title>Log in</title>
+						<form action="/login" method="POST">
+							<input type="text" name="username" />
+							<input type="password" name="password" />
+							<button type="submit">Log in</button>
+						</form>
+					` ];
+				})
+				.post('/login')
+				.reply(async (path, body) => {
+					const formData = await parseFormData(body);
+					const loggedIn = formData.username === 'person' &&
+						formData.password === 'password';
+
+					return [ 303, undefined, {
+						'location': '/',
+						'set-cookie': 'logged-in=' + Number(loggedIn),
+					} ];
+				});
+
+			const dom = await browser.navigateTo('/');
+			assert.equal(dom.window.document.title, 'Log in');
+			const [ form ] = dom.window.document.forms;
+			assert.ok(form, 'expected form');
+
+			const pendingResponse = browser.captureNavigation(dom);
+			assert(pendingResponse instanceof Promise, 'expected promise return value');
+
+			const [ username, password, submit ] = form.children;
+			username.value = 'person';
+			password.value = 'password';
+			submit.click();
+
+			const response = await pendingResponse;
+			assert(response instanceof Response, 'expected response');
+			assert.equal(response.status, 200);
+
+			const body = await response.text();
+			assert.equal(body, '<title>Welcome</title>');
 		});
 	});
 });

@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import http from 'node:http';
 import path from 'node:path';
+import parseFormData from '../../helpers/parse-form-data.js';
 
 export default http.createServer(async (req, res) => {
 	try {
@@ -28,16 +29,7 @@ async function index (req, res) {
 }
 
 async function signIn (req, res) {
-	let body = '';
-	for await (const chunk of req) {
-		body += chunk.toString();
-	}
-
-	const formData = {};
-	for (const key of [ 'email', 'password' ]) {
-		const value = new RegExp(`name="${key}"(?:\r\n)+(.*)`).exec(body)?.[1];
-		formData[key] = value;
-	}
+	const formData = await parseFormData(req);
 
 	const authenticated = formData.email === 'tallahassee@zombieland.zl' &&
 		formData.password === 'banjo';
