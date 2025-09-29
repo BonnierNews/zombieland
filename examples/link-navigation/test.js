@@ -61,7 +61,7 @@ Feature('in page navigation', () => {
 
 			let pendingResponse, pagehideTriggered = 0;
 			When('clicking the link', () => {
-				pendingResponse = browser.getPendingNavigation(dom);
+				pendingResponse = browser.captureNavigation(dom);
 				dom.window.addEventListener('pagehide', () => ++pagehideTriggered);
 				buttonLink.click();
 			});
@@ -90,7 +90,7 @@ Feature('in page navigation', () => {
 
 			let pendingResponse, pagehideTriggered = 0;
 			When('clicking the link', () => {
-				pendingResponse = browser.getPendingNavigation(dom);
+				pendingResponse = browser.captureNavigation(dom);
 				dom.window.addEventListener('pagehide', () => ++pagehideTriggered);
 				regularLink.click();
 			});

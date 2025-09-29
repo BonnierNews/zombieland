@@ -57,7 +57,7 @@ export default class Browser {
 		});
 	}
 
-	getPendingNavigation (dom) {
+	captureNavigation (dom) {
 		const browser = this;
 
 		return new Promise(resolve => {

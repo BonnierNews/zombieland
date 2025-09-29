@@ -34,7 +34,7 @@ Feature('form submission', () => {
 	let pendingResponse, pagehideTriggered = 0;
 	When('submitting form', () => {
 		dom.window.addEventListener('pagehide', () => ++pagehideTriggered);
-		pendingResponse = browser.getPendingNavigation(dom);
+		pendingResponse = browser.captureNavigation(dom);
 		const [ , , submitButton ] = form.elements;
 		submitButton.click();
 	});
