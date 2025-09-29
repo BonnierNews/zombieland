@@ -50,7 +50,6 @@ export default class Browser {
 			}),
 			cookieJar: this.cookieJar,
 			beforeParse: window => {
-				this.beforeParse(window);
 				jsdomConfig.resources?.beforeParse?.(window);
 				jsdomConfig.painter?.beforeParse(window);
 				jsdomConfig.beforeParse?.(window);
@@ -108,25 +107,5 @@ export default class Browser {
 		for (const directive of directives || []) {
 			this.cookieJar.setCookieSync(directive, url.href || url);
 		}
-	}
-
-	beforeParse (window) {
-		Object.defineProperties(window.Event.prototype, {
-			defaultPrevented: {
-				writable: true,
-			},
-			preventDefault: {
-				value: function () {
-					this.defaultPrevented = true;
-				}
-			}
-		});
-		Object.defineProperties(window.HTMLAnchorElement.prototype, {
-			click: {
-				value: function () {
-					this.dispatchEvent(new window.Event('click', { bubbles: true }));
-				}
-			}
-		});
 	}
 };
