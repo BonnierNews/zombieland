@@ -73,9 +73,7 @@ export default class Browser {
 			}
 
 			function catchFormSubmit (event) {
-				const form = event.target.closest('form');
-				if (!form) return;
-
+				const form = event.target;
 				return runDefault(event, form.action, {
 					method: form.method,
 					body: new dom.window.FormData(form, event.submitter),
