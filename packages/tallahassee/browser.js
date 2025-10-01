@@ -60,7 +60,7 @@ export default class Browser {
 	captureNavigation (dom) {
 		const browser = this;
 
-		return new Promise(resolve => {
+		return new Promise((resolve, reject) => {
 			dom.window.addEventListener('click', captureLinkClick);
 			dom.window.addEventListener('submit', captureFormSubmit);
 
@@ -83,7 +83,7 @@ export default class Browser {
 				if (event.defaultPrevented) {
 					dom.window.removeEventListener('click', captureLinkClick);
 					dom.window.removeEventListener('submit', captureFormSubmit);
-					return resolve(null);
+					return reject(new Error('Navigation was prevented'));
 				}
 
 				event.preventDefault();
