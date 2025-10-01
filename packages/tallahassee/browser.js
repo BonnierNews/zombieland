@@ -73,9 +73,15 @@ export default class Browser {
 
 			function captureFormSubmit (event) {
 				const form = event.target;
-				return runDefault(event, form.action, {
-					method: form.method,
-					body: new dom.window.FormData(form, event.submitter),
+				const submitter = event.submitter;
+				const method = submitter?.formMethod || form.method;
+				const enctype = submitter?.formEnctype || form.enctype;
+				const action = submitter?.formAction || form.action;
+
+				return runDefault(event, action, {
+					method,
+					headers: { 'content-type': enctype },
+					body: new dom.window.FormData(form, submitter),
 				});
 			}
 

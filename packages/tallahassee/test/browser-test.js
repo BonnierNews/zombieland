@@ -264,8 +264,8 @@ describe('Browser', () => {
 						` ];
 					})
 					.post('/login')
-					.reply(async (path, body) => {
-						const formData = await parseFormData(body);
+					.reply(async function (path, body) {
+						const formData = await parseFormData(body, this.req.headers['content-type']);
 						const loggedIn = formData.username === 'person' &&
 							formData.password === 'password';
 
@@ -293,6 +293,35 @@ describe('Browser', () => {
 
 				const response = await pendingResponse;
 				assert(response instanceof Response, 'expected response');
+				assert.equal(response.status, 200);
+
+				const body = await response.text();
+				assert.equal(body, '<title>Welcome</title>');
+			});
+
+			it('captures navigation from form with submitter', async () => {
+				assert.equal(dom.window.document.title, 'Log in');
+				const [ form ] = dom.window.document.forms;
+				assert.ok(form, 'expected form');
+
+				const [ username, password, submit ] = form.children;
+				username.value = 'person';
+				password.value = 'password';
+
+				const { method, action, enctype } = form;
+
+				form.method = 'get';
+				form.action = '/search';
+				form.enctype = 'text/plain';
+
+				submit.formMethod = method;
+				submit.formAction = action;
+				submit.formEnctype = enctype;
+
+				const pendingResponse = browser.captureNavigation(dom);
+				submit.click();
+
+				const response = await pendingResponse;
 				assert.equal(response.status, 200);
 
 				const body = await response.text();

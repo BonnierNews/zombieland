@@ -1,8 +1,11 @@
+import assert from 'node:assert';
 import { Readable } from 'node:stream';
 
 const fieldPattern = /form-data; name="(.*?)"\s+(.+)/gi;
 
-export default async function parseFormData (req) {
+export default async function parseFormData (req, contentType) {
+	assert.equal(contentType, 'application/x-www-form-urlencoded');
+
 	const body = await collectBody(req);
 
 	let formData;

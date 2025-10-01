@@ -29,7 +29,7 @@ async function index (req, res) {
 }
 
 async function signIn (req, res) {
-	const formData = await parseFormData(req);
+	const formData = await parseFormData(req, req.headers['content-type']);
 
 	const authenticated = formData.email === 'tallahassee@zombieland.zl' &&
 		formData.password === 'banjo';
