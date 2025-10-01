@@ -61,17 +61,17 @@ export default class Browser {
 		const browser = this;
 
 		return new Promise(resolve => {
-			dom.window.addEventListener('click', catchLinkClick);
-			dom.window.addEventListener('submit', catchFormSubmit);
+			dom.window.addEventListener('click', captureLinkClick);
+			dom.window.addEventListener('submit', captureFormSubmit);
 
-			function catchLinkClick (event) {
+			function captureLinkClick (event) {
 				const link = event.target.closest('a');
 				if (!link) return;
 
 				return runDefault(event, link.href);
 			}
 
-			function catchFormSubmit (event) {
+			function captureFormSubmit (event) {
 				const form = event.target;
 				return runDefault(event, form.action, {
 					method: form.method,
@@ -81,8 +81,8 @@ export default class Browser {
 
 			function runDefault (event, url, options) {
 				if (event.defaultPrevented) {
-					dom.window.removeEventListener('click', catchLinkClick);
-					dom.window.removeEventListener('submit', catchFormSubmit);
+					dom.window.removeEventListener('click', captureLinkClick);
+					dom.window.removeEventListener('submit', captureFormSubmit);
 					return resolve(null);
 				}
 
