@@ -57,7 +57,7 @@ export default class Browser {
 		});
 	}
 
-	captureNavigation (dom) {
+	captureNavigation (dom, follow) {
 		const browser = this;
 
 		return new Promise((resolve, reject) => {
@@ -95,7 +95,11 @@ export default class Browser {
 				event.preventDefault();
 				dom.window.dispatchEvent(new dom.window.Event('pagehide'));
 				dom.window.close();
-				resolve(browser.fetch(url, options));
+
+				resolve(follow ?
+					browser.fetch(url, options) :
+					new Request(url, options)
+				);
 			}
 		});
 	}

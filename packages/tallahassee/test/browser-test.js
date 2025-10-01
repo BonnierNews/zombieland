@@ -206,9 +206,7 @@ describe('Browser', () => {
 			beforeEach('a page with a link', async () => {
 				nock(url.origin)
 					.get('/')
-					.reply(200, '<a href="/about">About</a>')
-					.get('/about')
-					.reply(200, '<title>About</title>');
+					.reply(200, '<a href="/about">About</a>');
 
 				dom = await browser.navigateTo('/');
 			});
@@ -217,7 +215,25 @@ describe('Browser', () => {
 				const link = dom.window.document.querySelector('a');
 				assert.ok(link, 'expected link');
 
-				const pendingResponse = browser.captureNavigation(dom);
+				const pendingRequest = browser.captureNavigation(dom);
+				assert(pendingRequest instanceof Promise, 'expected promise return value');
+
+				link.click();
+
+				const request = await pendingRequest;
+				assert(request instanceof Request, 'expected request');
+				assert.equal(request.url, link.href);
+			});
+
+			it('captures and follows navigation from link', async () => {
+				nock(url.origin)
+					.get('/about')
+					.reply(200, '<title>About</title>');
+
+				const link = dom.window.document.querySelector('a');
+				assert.ok(link, 'expected link');
+
+				const pendingResponse = browser.captureNavigation(dom, true);
 				assert(pendingResponse instanceof Promise, 'expected promise return value');
 
 				link.click();
@@ -236,10 +252,10 @@ describe('Browser', () => {
 
 				link.addEventListener('click', event => event.preventDefault());
 
-				const pendingResponse = browser.captureNavigation(dom);
+				const pendingRequest = browser.captureNavigation(dom);
 				link.click();
 
-				await assert.rejects(pendingResponse);
+				await assert.rejects(pendingRequest);
 			});
 		});
 
@@ -256,23 +272,12 @@ describe('Browser', () => {
 
 						return [ 200, `
 							<title>Log in</title>
-							<form action="/login" method="POST">
+							<form method="post" action="/login">
 								<input type="text" name="username" />
 								<input type="password" name="password" />
 								<button type="submit">Log in</button>
 							</form>
 						` ];
-					})
-					.post('/login')
-					.reply(async function (path, body) {
-						const formData = await parseFormData(body, this.req.headers['content-type']);
-						const loggedIn = formData.username === 'person' &&
-							formData.password === 'password';
-
-						return [ 303, undefined, {
-							'location': '/',
-							'set-cookie': 'logged-in=' + Number(loggedIn),
-						} ];
 					});
 
 				dom = await browser.navigateTo('/');
@@ -287,16 +292,16 @@ describe('Browser', () => {
 				username.value = 'person';
 				password.value = 'password';
 
-				const pendingResponse = browser.captureNavigation(dom);
-				assert(pendingResponse instanceof Promise, 'expected promise return value');
+				const pendingRequest = browser.captureNavigation(dom);
+				assert(pendingRequest instanceof Promise, 'expected promise return value');
 				submit.click();
 
-				const response = await pendingResponse;
-				assert(response instanceof Response, 'expected response');
-				assert.equal(response.status, 200);
-
-				const body = await response.text();
-				assert.equal(body, '<title>Welcome</title>');
+				const request = await pendingRequest;
+				assert(request instanceof Request, 'expected request');
+				assert.equal(request.method, form.method.toUpperCase());
+				assert.equal(request.url, form.action);
+				assert.equal(request.headers.get('content-type'), form.enctype);
+				assert(request.body instanceof ReadableStream);
 			});
 
 			it('captures navigation from form with submitter', async () => {
@@ -318,10 +323,43 @@ describe('Browser', () => {
 				submit.formAction = action;
 				submit.formEnctype = enctype;
 
-				const pendingResponse = browser.captureNavigation(dom);
+				const pendingRequest = browser.captureNavigation(dom);
+				submit.click();
+
+				const request = await pendingRequest;
+				assert.equal(request.method, method.toUpperCase());
+				assert.equal(request.url, action);
+				assert.equal(request.headers.get('content-type'), enctype);
+			});
+
+			it('captures and follows navigation from form', async () => {
+				nock(url.origin)
+					.post('/login')
+					.reply(async function (path, body) {
+						const formData = await parseFormData(body, this.req.headers['content-type']);
+						const loggedIn = formData.username === 'person' &&
+							formData.password === 'password';
+
+						return [ 303, undefined, {
+							'location': '/',
+							'set-cookie': 'logged-in=' + Number(loggedIn),
+						} ];
+					});
+
+				assert.equal(dom.window.document.title, 'Log in');
+				const [ form ] = dom.window.document.forms;
+				assert.ok(form, 'expected form');
+
+				const [ username, password, submit ] = form.children;
+				username.value = 'person';
+				password.value = 'password';
+
+				const pendingResponse = browser.captureNavigation(dom, true);
+				assert(pendingResponse instanceof Promise, 'expected promise return value');
 				submit.click();
 
 				const response = await pendingResponse;
+				assert(response instanceof Response, 'expected response');
 				assert.equal(response.status, 200);
 
 				const body = await response.text();
@@ -339,10 +377,10 @@ describe('Browser', () => {
 				username.value = 'person';
 				password.value = 'password';
 
-				const pendingResponse = browser.captureNavigation(dom);
+				const pendingRequest = browser.captureNavigation(dom);
 				submit.click();
 
-				await assert.rejects(pendingResponse);
+				await assert.rejects(pendingRequest);
 			});
 		});
 	});
