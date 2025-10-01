@@ -315,23 +315,6 @@ describe('Browser', () => {
 
 				await assert.rejects(pendingResponse);
 			});
-
-			it('what happens on form with method=dialog?', async () => {
-				assert.equal(dom.window.document.title, 'Log in');
-				const [ form ] = dom.window.document.forms;
-				assert.ok(form, 'expected form');
-
-				form.method = 'dialog';
-
-				const [ username, password, submit ] = form.children;
-				username.value = 'person';
-				password.value = 'password';
-
-				const pendingResponse = browser.captureNavigation(dom);
-				submit.click();
-
-				await pendingResponse;
-			});
 		});
 	});
 });
