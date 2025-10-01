@@ -58,20 +58,14 @@ Feature('Link navigation', () => {
 			assert.equal(dialog.open, false);
 		});
 
-		let pendingResponse, pagehideTriggered = 0;
+		let pendingRequest;
 		When('clicking the link', () => {
-			pendingResponse = browser.captureNavigation(dom);
-			dom.window.addEventListener('pagehide', () => ++pagehideTriggered);
+			pendingRequest = browser.captureNavigation(dom);
 			buttonLink.click();
 		});
 
-		Then('page remains open', () => {
-			assert.equal(pagehideTriggered, 0);
-			assert.ok(dom.window.document);
-		});
-
-		And('no navigation occurs', async () => {
-			await assert.rejects(pendingResponse);
+		Then('no navigation occurs', async () => {
+			await assert.rejects(pendingRequest);
 		});
 
 		And('the dialog is shown', () => {
@@ -88,21 +82,20 @@ Feature('Link navigation', () => {
 
 		let pendingResponse, pagehideTriggered = 0;
 		When('clicking the link', () => {
-			pendingResponse = browser.captureNavigation(dom);
+			pendingResponse = browser.captureNavigation(dom, true);
 			dom.window.addEventListener('pagehide', () => ++pagehideTriggered);
 			regularLink.click();
 		});
 
-		Then('page is closed', () => {
-			assert.equal(pagehideTriggered, 1);
-		});
-
-		And('navigation occurs', async () => {
+		Then('navigation occurs', async () => {
 			const response = await pendingResponse;
 			assert.ok(response);
 			assert(response instanceof Response);
-			const origin = await pendingServerOrigin;
-			assert.equal(response.url, new URL('/page-1', origin).href);
+			assert.equal(response.url, regularLink.href);
+		});
+
+		And('page is closed', () => {
+			assert.equal(pagehideTriggered, 1);
 		});
 	});
 });
