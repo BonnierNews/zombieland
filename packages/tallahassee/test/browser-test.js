@@ -298,9 +298,9 @@ describe('Browser', () => {
 
 				const request = await pendingRequest;
 				assert(request instanceof Request, 'expected request');
-				assert.equal(request.method, form.method.toUpperCase());
-				assert.equal(request.url, form.action);
-				assert.equal(request.headers.get('content-type'), form.enctype);
+				assert.equal(request.method, 'POST');
+				assert.equal(request.url, url.origin + '/login');
+				assert.equal(request.headers.get('content-type'), 'application/x-www-form-urlencoded');
 				assert(request.body instanceof ReadableStream);
 			});
 
@@ -327,9 +327,33 @@ describe('Browser', () => {
 				submit.click();
 
 				const request = await pendingRequest;
-				assert.equal(request.method, method.toUpperCase());
-				assert.equal(request.url, action);
-				assert.equal(request.headers.get('content-type'), enctype);
+				assert.equal(request.method, 'POST');
+				assert.equal(request.url, url.origin + '/login');
+				assert.equal(request.headers.get('content-type'), 'application/x-www-form-urlencoded');
+			});
+
+			it('captures navigation from simple form', async () => {
+				dom = await browser.load(`
+					<form action="/search">
+						<input type="search" name="query" />
+						<button>Search</button>
+					</form>
+				`, { url });
+				const [ form ] = dom.window.document.forms;
+				assert.ok(form, 'expected form');
+
+				const [ query, submit ] = form.children;
+				query.value = 'Twinkies (not snowballs)';
+
+				const pendingRequest = browser.captureNavigation(dom);
+				assert(pendingRequest instanceof Promise, 'expected promise return value');
+				submit.click();
+
+				const request = await pendingRequest;
+				assert(request instanceof Request, 'expected request');
+				assert.equal(request.method, 'GET');
+				assert.equal(request.url, url.origin + '/search?query=Twinkies+%28not+snowballs%29');
+				assert.equal(request.headers.get('content-type'), null);
 			});
 
 			it('captures and follows navigation from form', async () => {

@@ -68,38 +68,49 @@ export default class Browser {
 				const link = event.target.closest('a');
 				if (!link) return;
 
-				return runDefault(event, link.href);
+				runDefault(event, link.href);
 			}
 
 			function captureFormSubmit (event) {
 				const form = event.target;
 				const submitter = event.submitter;
 				const method = submitter?.formMethod || form.method;
-				const enctype = submitter?.formEnctype || form.enctype;
-				const action = submitter?.formAction || form.action;
+				let action = submitter?.formAction || form.action;
+				console.log(action);
+				action = new URL(action);
+				const body = new dom.window.FormData(form, submitter);
+				if (method === 'post') {
+					const enctype = submitter?.formEnctype || form.enctype;
 
-				return runDefault(event, action, {
-					method,
-					headers: { 'content-type': enctype },
-					body: new dom.window.FormData(form, submitter),
-				});
+					return runDefault(event, action, {
+						method,
+						headers: { 'content-type': enctype },
+						body,
+					});
+				}
+
+				for (const [ key, value ] of body) {
+					action.searchParams.set(key, value);
+				}
+
+				runDefault(event, action);
 			}
 
 			function runDefault (event, url, options) {
+				dom.window.removeEventListener('click', captureLinkClick);
+				dom.window.removeEventListener('submit', captureFormSubmit);
 				if (event.defaultPrevented) {
-					dom.window.removeEventListener('click', captureLinkClick);
-					dom.window.removeEventListener('submit', captureFormSubmit);
 					return reject(new Error('Navigation was prevented'));
 				}
 
 				event.preventDefault();
+				if (!follow) {
+					return resolve(new Request(url, options));
+				}
+
 				dom.window.dispatchEvent(new dom.window.Event('pagehide'));
 				dom.window.close();
-
-				resolve(follow ?
-					browser.fetch(url, options) :
-					new Request(url, options)
-				);
+				resolve(browser.fetch(url, options));
 			}
 		});
 	}
