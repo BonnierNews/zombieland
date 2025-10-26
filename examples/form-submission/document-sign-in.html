@@ -1,0 +1,27 @@
+<!doctype>
+
+<h1>Sign in</h1>
+
+<form method="POST" action="/sign-in">
+	<label>E-mail</label>
+	<input type="email" name="email" required />
+
+	<label>Password</label>
+	<input type="password" name="password" required />
+
+	<button type="submit">
+		Sign in
+	</button>
+</form>
+
+<script>
+	const [ form ] = document.forms;
+	form.noValidate = true;
+	form.addEventListener('submit', validateForm);
+
+	function validateForm (event) {
+		if (!(form.reportValidity() && window.externalCAPTCHA())) {
+			event.preventDefault();
+		}
+	}
+</script>

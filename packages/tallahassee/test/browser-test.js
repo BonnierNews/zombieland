@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import Browser from '../browser.js';
 import nock from 'nock';
+import parseFormData from '../../../helpers/parse-form-data.js';
 
 describe('Browser', () => {
 	before(() => nock.disableNetConnect());
@@ -196,6 +197,248 @@ describe('Browser', () => {
 			const dom = await browser.load(pendingResponse);
 			assert.equal(dom.window.location.href, url.origin + '/xml-document');
 			assert.equal(dom.window.document.contentType, 'application/xml');
+		});
+	});
+
+	describe('.captureNavigation()', () => {
+		describe('links', () => {
+			let dom;
+			beforeEach('a page with a link', async () => {
+				nock(url.origin)
+					.get('/')
+					.reply(200, '<a href="/about">About</a>');
+
+				dom = await browser.navigateTo('/');
+			});
+
+			it('captures navigation from link', async () => {
+				const link = dom.window.document.querySelector('a');
+				assert.ok(link, 'expected link');
+
+				const pendingRequest = browser.captureNavigation(dom);
+				assert(pendingRequest instanceof Promise, 'expected promise return value');
+
+				link.click();
+
+				const request = await pendingRequest;
+				assert(request instanceof Request, 'expected request');
+				assert.equal(request.url, link.href);
+			});
+
+			it('captures and follows navigation from link', async () => {
+				nock(url.origin)
+					.get('/about')
+					.reply(200, '<title>About</title>');
+
+				const link = dom.window.document.querySelector('a');
+				assert.ok(link, 'expected link');
+
+				const pendingResponse = browser.captureNavigation(dom, true);
+				assert(pendingResponse instanceof Promise, 'expected promise return value');
+
+				link.click();
+
+				const response = await pendingResponse;
+				assert(response instanceof Response, 'expected response');
+				assert.equal(response.status, 200);
+
+				const body = await response.text();
+				assert.equal(body, '<title>About</title>');
+			});
+
+			it('fails on prevented navigation', async () => {
+				const link = dom.window.document.querySelector('a');
+				assert.ok(link, 'expected link');
+
+				link.addEventListener('click', event => event.preventDefault());
+
+				const pendingRequest = browser.captureNavigation(dom);
+				link.click();
+
+				await assert.rejects(pendingRequest, event => {
+					assert.ok(event instanceof dom.window.Event);
+					assert.equal(event.type, 'click');
+					assert.equal(event.target, link);
+					return true;
+				});
+			});
+		});
+
+		describe('forms', () => {
+			let dom;
+			beforeEach(async () => {
+				nock(url.origin)
+					.get('/')
+					.times(2)
+					.reply(function () {
+						if (this.req.headers.cookie === 'logged-in=1') {
+							return [ 200, '<title>Welcome</title>' ];
+						}
+
+						return [ 200, `
+							<title>Log in</title>
+							<form method="post" action="/login">
+								<input type="text" name="username" />
+								<input type="password" name="password" />
+								<button type="submit">Log in</button>
+							</form>
+						` ];
+					});
+
+				dom = await browser.navigateTo('/');
+			});
+
+			it('captures navigation from form', async () => {
+				assert.equal(dom.window.document.title, 'Log in');
+				const [ form ] = dom.window.document.forms;
+				assert.ok(form, 'expected form');
+
+				const [ username, password, submit ] = form.children;
+				username.value = 'person';
+				password.value = 'password';
+
+				const pendingRequest = browser.captureNavigation(dom);
+				assert(pendingRequest instanceof Promise, 'expected promise return value');
+				submit.click();
+
+				const request = await pendingRequest;
+				assert(request instanceof Request, 'expected request');
+				assert.equal(request.method, 'POST');
+				assert.equal(request.url, url.origin + '/login');
+				assert.equal(request.headers.get('content-type'), 'application/x-www-form-urlencoded');
+				assert(request.body instanceof ReadableStream);
+			});
+
+			it('captures navigation from form with submitter', async () => {
+				assert.equal(dom.window.document.title, 'Log in');
+				const [ form ] = dom.window.document.forms;
+				assert.ok(form, 'expected form');
+
+				const [ username, password, submit ] = form.children;
+				username.value = 'person';
+				password.value = 'password';
+
+				const { method, action, enctype } = form;
+
+				form.method = 'get';
+				form.action = '/search';
+				form.enctype = 'text/plain';
+
+				submit.formMethod = method;
+				submit.formAction = action;
+				submit.formEnctype = enctype;
+
+				const pendingRequest = browser.captureNavigation(dom);
+				submit.click();
+
+				const request = await pendingRequest;
+				assert.equal(request.method, 'POST');
+				assert.equal(request.url, url.origin + '/login');
+				assert.equal(request.headers.get('content-type'), 'application/x-www-form-urlencoded');
+			});
+
+			it('captures navigation from simple form', async () => {
+				dom = await browser.load(`
+					<form action="/search">
+						<input type="search" name="query" />
+						<button>Search</button>
+					</form>
+				`, { url });
+				const [ form ] = dom.window.document.forms;
+				assert.ok(form, 'expected form');
+
+				const [ query, submit ] = form.children;
+				query.value = 'Twinkies (not snowballs)';
+
+				const pendingRequest = browser.captureNavigation(dom);
+				assert(pendingRequest instanceof Promise, 'expected promise return value');
+				submit.click();
+
+				const request = await pendingRequest;
+				assert(request instanceof Request, 'expected request');
+				assert.equal(request.method, 'GET');
+				assert.equal(request.url, url.origin + '/search?query=Twinkies+%28not+snowballs%29');
+				assert.equal(request.headers.get('content-type'), null);
+			});
+
+			it('captures and follows navigation from form', async () => {
+				nock(url.origin)
+					.post('/login')
+					.reply(async function (path, body) {
+						const formData = await parseFormData(body, this.req.headers['content-type']);
+						const loggedIn = formData.username === 'person' &&
+							formData.password === 'password';
+
+						return [ 303, undefined, {
+							'location': '/',
+							'set-cookie': 'logged-in=' + Number(loggedIn),
+						} ];
+					});
+
+				assert.equal(dom.window.document.title, 'Log in');
+				const [ form ] = dom.window.document.forms;
+				assert.ok(form, 'expected form');
+
+				const [ username, password, submit ] = form.children;
+				username.value = 'person';
+				password.value = 'password';
+
+				const pendingResponse = browser.captureNavigation(dom, true);
+				assert(pendingResponse instanceof Promise, 'expected promise return value');
+				submit.click();
+
+				const response = await pendingResponse;
+				assert(response instanceof Response, 'expected response');
+				assert.equal(response.status, 200);
+
+				const body = await response.text();
+				assert.equal(body, '<title>Welcome</title>');
+			});
+
+			it('fails on invalid submit', async () => {
+				assert.equal(dom.window.document.title, 'Log in');
+				const [ form ] = dom.window.document.forms;
+				assert.ok(form, 'expected form');
+
+				form.addEventListener('submit', event => event.preventDefault());
+
+				const [ username, password, submit ] = form.children;
+				username.required = true;
+				password.required = true;
+
+				const pendingRequest = browser.captureNavigation(dom);
+				submit.click();
+
+				await assert.rejects(pendingRequest, event => {
+					assert.ok(event instanceof dom.window.Event);
+					assert.equal(event.type, 'invalid');
+					assert.equal(event.target, username);
+					return true;
+				});
+			});
+
+			it('fails on prevented navigation', async () => {
+				assert.equal(dom.window.document.title, 'Log in');
+				const [ form ] = dom.window.document.forms;
+				assert.ok(form, 'expected form');
+
+				form.addEventListener('submit', event => event.preventDefault());
+
+				const [ username, password, submit ] = form.children;
+				username.value = 'person';
+				password.value = 'password';
+
+				const pendingRequest = browser.captureNavigation(dom);
+				submit.click();
+
+				await assert.rejects(pendingRequest, event => {
+					assert.ok(event instanceof dom.window.Event);
+					assert.equal(event.type, 'submit');
+					assert.equal(event.target, form);
+					assert.equal(event.defaultPrevented, true);
+					return true;
+				});
+			});
 		});
 	});
 });
