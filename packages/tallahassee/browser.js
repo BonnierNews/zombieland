@@ -63,6 +63,9 @@ export default class Browser {
 		return new Promise((resolve, reject) => {
 			dom.window.addEventListener('click', captureLinkClick);
 			dom.window.addEventListener('submit', captureFormSubmit);
+			for (const form of dom.window.document.forms)
+				for (const element of form.elements)
+					element.addEventListener('invalid', captureFormElementInvalid);
 
 			function captureLinkClick (event) {
 				const link = event.target.closest('a');
@@ -75,10 +78,9 @@ export default class Browser {
 				const form = event.target;
 				const submitter = event.submitter;
 				const method = submitter?.formMethod || form.method;
-				let action = submitter?.formAction || form.action;
-				console.log(action);
-				action = new URL(action);
+				const action = new URL(submitter?.formAction || form.action);
 				const body = new dom.window.FormData(form, submitter);
+
 				if (method === 'post') {
 					const enctype = submitter?.formEnctype || form.enctype;
 
@@ -96,9 +98,13 @@ export default class Browser {
 				runDefault(event, action);
 			}
 
+			function captureFormElementInvalid () {
+				cleanUp();
+				return reject(new Error('Form element was invalid'))
+			}
+
 			function runDefault (event, url, options) {
-				dom.window.removeEventListener('click', captureLinkClick);
-				dom.window.removeEventListener('submit', captureFormSubmit);
+				cleanUp();
 				if (event.defaultPrevented) {
 					return reject(new Error('Navigation was prevented'));
 				}
@@ -111,6 +117,14 @@ export default class Browser {
 				dom.window.dispatchEvent(new dom.window.Event('pagehide'));
 				dom.window.close();
 				resolve(browser.fetch(url, options));
+			}
+
+			function cleanUp () {
+				dom.window.removeEventListener('click', captureLinkClick);
+				dom.window.removeEventListener('submit', captureFormSubmit);
+				for (const form of dom.window.document.forms)
+					for (const element of form.elements)
+						element.removeEventListener('invalid', captureFormElementInvalid);
 			}
 		});
 	}
