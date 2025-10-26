@@ -31,7 +31,9 @@ async function index (req, res) {
 async function signIn (req, res) {
 	const formData = await parseFormData(req, req.headers['content-type']);
 
-	const authenticated = formData.email === 'tallahassee@zombieland.zl' &&
+	// Demo code. Do not assert credentials like this.
+	const authenticated =
+		formData.email === 'tallahassee@zombieland.zl' &&
 		formData.password === 'banjo';
 
 	const headers = {};
