@@ -99,7 +99,7 @@ Feature('form submission', () => {
 		});
 
 		But('some external validation fails', () => {
-			// something that should prevent 'submit' without triggering 'invalid'
+			// something that prevents 'submit' without triggering 'invalid'
 			dom.window.externalCAPTCHA = () => false;
 		});
 
