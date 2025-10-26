@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import server from './server.js';
 import setup from '../helpers/setup.js';
-import { Browser, jsdom } from '../../zombieland.js';
+import { Browser } from '../../zombieland.js';
 
 Feature('form submission', () => {
 	const pendingServerOrigin = setup(server);
@@ -25,7 +25,7 @@ Feature('form submission', () => {
 			[ emailField, passwordField, submitButton ] = form.elements;
 		});
 
-		And('user fills out form incorrectly', () => {
+		And('user enters invalid credentials', () => {
 			emailField.value = 'not an email';
 		});
 
@@ -47,7 +47,7 @@ Feature('form submission', () => {
 			assert.ok(dom.window.document);
 		});
 
-		Given('user fills out form correctly', () => {
+		Given('user enters valid credentials', () => {
 			emailField.value = 'tallahassee@zombieland.zl';
 			passwordField.value = 'banjo';
 		});
@@ -96,13 +96,13 @@ Feature('form submission', () => {
 			[ emailField, passwordField, submitButton ] = form.elements;
 		});
 
-		And('user fills out form correctly', () => {
+		And('user enters valid credentials', () => {
 			emailField.value = 'tallahassee@zombieland.zl';
 			passwordField.value = 'banjo';
 		});
 
 		But('some external validation fails', () => {
-			// something that prevents 'submit' without triggering 'invalid'
+			// something that prevents 'submit' default action without triggering 'invalid'
 			dom.window.externalCAPTCHA = () => false;
 		});
 
