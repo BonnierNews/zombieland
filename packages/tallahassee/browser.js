@@ -98,15 +98,15 @@ export default class Browser {
 				runDefault(event, action);
 			}
 
-			function captureFormElementInvalid () {
+			function captureFormElementInvalid (event) {
 				cleanUp();
-				return reject(new Error('Form element was invalid'))
+				return reject(event)
 			}
 
 			function runDefault (event, url, options) {
 				cleanUp();
 				if (event.defaultPrevented) {
-					return reject(new Error('Navigation was prevented'));
+					return reject(event);
 				}
 
 				event.preventDefault();

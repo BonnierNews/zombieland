@@ -37,8 +37,11 @@ Feature('form submission', () => {
 		});
 
 		Then('no navigation occurs', async () => {
-			await assert.rejects(pendingResponse, {
-				message: 'Form element was invalid'
+			await assert.rejects(pendingResponse, event => {
+				assert(event instanceof dom.window.Event);
+				assert.equal(event.type, 'invalid');
+				assert.equal(event.target, emailField);
+				return true;
 			});
 			assert.equal(pagehideTriggered, 0);
 			assert.ok(dom.window.document);
@@ -111,8 +114,11 @@ Feature('form submission', () => {
 		});
 
 		Then('no navigation occurs', async () => {
-			await assert.rejects(pendingResponse, {
-				message: 'Navigation was prevented'
+			await assert.rejects(pendingResponse, event => {
+				assert(event instanceof dom.window.Event);
+				assert.equal(event.type, 'submit')
+				assert.equal(event.defaultPrevented, true);
+				return true;
 			});
 			assert.equal(pagehideTriggered, 0);
 			assert.ok(dom.window.document);

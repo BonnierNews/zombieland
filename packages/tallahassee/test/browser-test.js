@@ -255,7 +255,12 @@ describe('Browser', () => {
 				const pendingRequest = browser.captureNavigation(dom);
 				link.click();
 
-				await assert.rejects(pendingRequest);
+				await assert.rejects(pendingRequest, event => {
+					assert.ok(event instanceof dom.window.Event);
+					assert.equal(event.type, 'click');
+					assert.equal(event.target, link);
+					return true;
+				});
 			});
 		});
 
@@ -390,6 +395,28 @@ describe('Browser', () => {
 				assert.equal(body, '<title>Welcome</title>');
 			});
 
+			it('fails on invalid submit', async () => {
+				assert.equal(dom.window.document.title, 'Log in');
+				const [ form ] = dom.window.document.forms;
+				assert.ok(form, 'expected form');
+
+				form.addEventListener('submit', event => event.preventDefault());
+
+				const [ username, password, submit ] = form.children;
+				username.required = true;
+				password.required = true;
+
+				const pendingRequest = browser.captureNavigation(dom);
+				submit.click();
+
+				await assert.rejects(pendingRequest, event => {
+					assert.ok(event instanceof dom.window.Event);
+					assert.equal(event.type, 'invalid');
+					assert.equal(event.target, username);
+					return true;
+				});
+			});
+
 			it('fails on prevented navigation', async () => {
 				assert.equal(dom.window.document.title, 'Log in');
 				const [ form ] = dom.window.document.forms;
@@ -404,7 +431,13 @@ describe('Browser', () => {
 				const pendingRequest = browser.captureNavigation(dom);
 				submit.click();
 
-				await assert.rejects(pendingRequest);
+				await assert.rejects(pendingRequest, event => {
+					assert.ok(event instanceof dom.window.Event);
+					assert.equal(event.type, 'submit');
+					assert.equal(event.target, form);
+					assert.equal(event.defaultPrevented, true);
+					return true;
+				});
 			});
 		});
 	});
