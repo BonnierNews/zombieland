@@ -24,7 +24,7 @@ test('detailed navigation', () => {
 	const response = await browser.fetch('/', { 'Cookie': 'signed-in=1' });
 	assert.equal(response.status, 200);
 
-	const dom = await browser.load(response);
+	const dom = await browser.load(response, { runScripts: 'dangerously' });
 	assert.equal(dom.window.document.title, 'Zombieland');
 });
 ```
@@ -35,7 +35,6 @@ test('detailed navigation', () => {
 
 A module for testing navigation within an origin
 
-
 ```js
 import { Browser } from '@zombieland/tallahassee';
 ```
@@ -45,73 +44,119 @@ import { Browser } from '@zombieland/tallahassee';
 Creates a new browser instance
 
 - `origin` `<string>` Base URL used by `browser.fetch`
-- `cookieJar` `<CookieJar>` A [jar of cookies](https://github.com/jsdom/jsdom/blob/main/README.md#cookie-jars) to be used by fetch calls
+- `cookieJar` `<CookieJar>` A [jar of cookies](https://github.com/jsdom/jsdom/blob/main/README.md#cookie-jars) to be used by browser `fetch` method. **Default** `new CookieJar()`
 
 #### `browser.navigateTo(url[, headers, jsdomOptions])`
 
-Fetches and loads a DOM
+Fetches a document and loads a DOM
 
 - `url` `<string>` | `<URL>` URL to a DOM – relative to the browser origin
-- `headers` `<Headers>` | `<Object>` Request headers. *Default* `{}`.
-- `jsdomOptions` `<Object>` [Options to pass on to `JSDOM`](https://github.com/jsdom/jsdom/blob/main/README.md#simple-options). *Default* `{}`
+- `headers` `<Headers>` | `<Object>` Request headers. **Default** `{}`.
+	- Cookies from `Cookie` header will be automatically added to browser cookie jar
+- `jsdomOptions` `<Object>` [Options to forward to `JSDOM`](https://github.com/jsdom/jsdom/blob/main/README.md#simple-options).
 - Returns: `<Promise>` Fulfills with a `JSDOM` on success
 
 ```js
 const dom = await browser.navigateTo(
 	'/',
-	{ 'Cookie'; 'some-cookie=value;' },
+	{ 'Cookie'; 'some-cookie=value' },
 	{ runScripts: 'dangerously' }
 );
 ```
 
 #### `browser.fetch(url[, options])`
 
-Fetches a document response. Useful for inspecting response details before loading DOM.
+Fetches a document. Useful for inspecting response details before loading DOM.
 
-- `url` `<string>` | `<URL>` Pathname / URL to a document – relative to the browser origin
-- `options` `<Object>` A `RequestInit` dictionary. *Default* `{}`.
+- `url` `<URL>` | `<string>` URL / path to a document – relative to the browser origin
+- `options` `<Object>` A `RequestInit` dictionary. **Default** `{}`
 - Returns: `<Promise>` Fulfills with a `Response` on success
 
 ```js
-const pendingResponse = browser.fetch(
-	'/',
-	{ 'Cookie'; 'some-cookie=value;' }
-);
+const pendingResponse = browser.fetch('/', {
+	'Cookie'; 'some-cookie=value;'
+});
 ```
 
 #### `browser.load(response[, jsdomOptions])`
 
-Loads a document from a response
+Loads a DOM from a document or a document response
 
-- `response` `<Response>` | `<Promise>` A response to load into JSDOM
-- `jsdomOptions` `<Object>` [Options to pass on to `JSDOM`](https://github.com/jsdom/jsdom/blob/main/README.md#simple-options). *Default*
-	- `runScripts`: `'outside-only'`
-	- `pretendToBeVisual`: `true`
-	- `url`: `url` from `response`
-	- `contentType`: `Content-Type` response header from `response`
-	- `cookieJar`: `cookieJar` from `browser`
+- `response` `<Response>` | <string> | `<Promise>` A response to load into JSDOM
+- `jsdomOptions` `<Object>` [Options to pass on to `JSDOM`](https://github.com/jsdom/jsdom/blob/main/README.md#simple-options).
+	- **Default**:
+		- `runScripts`: `'outside-only'`
+		- `pretendToBeVisual`: `true`
+	- **Fixed values**:
+		- `url`: `url` from `response` if instance of `Response`
+		- `contentType`: `Content-Type` response header from `response` if instance of `Response`
+		- `cookieJar`: `cookieJar` from `browser` instance
+		- `beforeParse`: A function that will run:
+			- `jsdomOptions.painter?.beforeParse`: From a Little Rock `Painter` instance
+			- `jsdomOptions.resources?.beforeParse`: From a Wichita `Resources` instance
+			- `jsdomOptions.beforeParse`
 - Returns: `<Promise>` Fulfills with a `JSDOM` on success
 
 ```js
-const dom = await browser.load(
-	pendingResponse,
-	{ runScripts: 'dangerously' }
-);
+const dom = await browser.load(pendingResponse, {
+	runScripts: 'dangerously'
+});
+```
+
+If using Little Rock and/or Wichita their `beforeParse` methods will be run automatically if passed into `jsdomOptions`:
+
+```js
+import { Browser } from "@zombieland/tallahassee";
+import { Painter } from "@zombieland/little-rock";
+import { ResourceLoader } from "@zombieland/wichita";
+
+const browser = new Browser(…);
+const pendingResponse = browser.fetch('/');
+const dom = await browser.load(pendingResponse, {
+	painter: new Painter(…),
+	resources: new ResourceLoader(…),
+});
 ```
 
 #### `browser.captureNavigation(dom[, follow])`
 
-Captures navigation from a link click or a form sumbmit
+Captures navigation from link clicks and form submits.
 
-- `dom` `<JSOM>` A dom to observe
-- `follow` `<Boolean>` To follow request or not. *Default* `false`
-- Returns: `<Promise>` Resolves with either a `<Request>` or `<Response>` if truthy `follow` option. Rejects with an `Event` which blocked the navigation.
+- `dom` `<JSDOM>` A DOM to observe
+- `follow` `<Boolean>` To follow request or not. **Default** `false`
+- Returns: `<Promise>` Resolves with a `<Request>` or `<Response>` from `fetch` if `follow: true`. Rejects with an `Event` which blocked the navigation.
 
 ```js
-const pendingNavigation = await browser.captureNavigation(dom, true);
-dom.window.querySelector('a[link], form button[type=submit]').click();
-const response = await pendingNavigation;
+const linkOrFormSubmit = dom.window.querySelector('a, button[type=submit]');
+
+const pendingNavigation = browser.captureNavigation(dom, false);
+linkOrFormSubmit.click();
+const request = await pendingNavigation;
+assert(request instanceof Request);
 ```
+
+Or with `follow: true` to perform a call to `browser.fetch()`
+
+```js
+const pendingNavigation = browser.captureNavigation(dom, true);
+linkOrFormSubmit.click();
+const response = await pendingNavigation;
+assert(request instanceof Response);
+```
+
+Navigation will fail if stopped by:
+- Prevented default action of link `click` / form `submit` event using `preventDefault()`
+- Form element `invalid` event
+
+```js
+await assert.reject(pendingNavigation, (event) => {
+	assert.equal(event.type, 'invalid');
+	assert.equal(event.target, form.elements[1]);
+	return true;
+})
+```
+
+Navigation is intercepted at the `window` level using event listeners. Promise will not settle if event propagation is stopped or if form submit is triggered without event, e.g. with the `submit` method.
 
 ### `ReverseProxy`
 
@@ -123,7 +168,7 @@ import { ReverseProxy } from '@zombieland/tallahassee';
 
 #### `new ReverseProxy(proxyOrigin, upstreamOrigin[, headers])`
 
-Creates a proxy from a public origin to a local origin
+Creates HTTP interceptor for a public proxy origin and proxies request to local upstream origin.
 
 - `proxyOrigin` `<string>` Public URL origin
 - `upstreamOrigin` `<string>` Server URL origin
@@ -131,8 +176,10 @@ Creates a proxy from a public origin to a local origin
 - Returns: `<ReverseProxy>`
 
 ```js
+import http from 'node:http';
 import { Browser, ReverseProxy } from '@zombieland/tallahassee';
 
+http.createServer(…).listen(7411);
 const reverseProxy = new ReverseProxy('https://tallahassee.zl', 'http://localhost:7411')
 const browser = new Browser('https://tallahassee.zl');
 const dom = await browser.navigateTo('/safe-house');

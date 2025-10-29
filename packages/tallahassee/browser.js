@@ -6,7 +6,7 @@ export default class Browser {
 		this.cookieJar = cookieJar || new jsdom.CookieJar();
 	}
 
-	async navigateTo (url, headers, jsdomConfig = {}) {
+	async navigateTo (url, headers, jsdomConfig) {
 		const response = this.fetch(url, headers && { headers });
 		return this.load(response, jsdomConfig);
 	}
@@ -50,8 +50,8 @@ export default class Browser {
 			}),
 			cookieJar: this.cookieJar,
 			beforeParse: window => {
-				jsdomConfig.resources?.beforeParse?.(window);
 				jsdomConfig.painter?.beforeParse(window);
+				jsdomConfig.resources?.beforeParse?.(window);
 				jsdomConfig.beforeParse?.(window);
 			}
 		});
@@ -100,7 +100,7 @@ export default class Browser {
 
 			function captureFormElementInvalid (event) {
 				cleanUp();
-				return reject(event)
+				return reject(event);
 			}
 
 			function runDefault (event, url, options) {
