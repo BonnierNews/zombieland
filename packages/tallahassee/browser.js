@@ -6,22 +6,26 @@ export default class Browser {
 		this.cookieJar = cookieJar || new jsdom.CookieJar();
 	}
 
-	async navigateTo (url, headers, jsdomConfig) {
-		const response = this.fetch(url, headers && { headers });
+	async navigateTo (resource, options, jsdomConfig) {
+		const response = this.fetch(resource, options);
 		return this.load(response, jsdomConfig);
 	}
 
-	async fetch (url, options = {}) {
-		url = new URL(url, this.origin);
+	async fetch (resource, options = {}) {
+		resource = typeof resource === 'string' ? new URL(resource, this.origin) : resource;
+		const isRequest = resource instanceof Request;
+		const request = isRequest ? resource : new Request(resource, {
+			...options,
+			redirect: 'manual'
+		});
 
-		const headers = new Headers(options.headers);
-		this.#persistCookies(url, headers);
-		headers.delete('cookie');
-		headers.set('cookie', this.cookieJar.getCookieStringSync(url.href));
+		this.#persistCookies(request.url, request.headers);
+		request.headers.delete('cookie');
+		request.headers.set('cookie', this.cookieJar.getCookieStringSync(request.url));
 
-		const response = await fetch(url, { ...options, headers, redirect: 'manual' });
+		const response = await fetch(request);
 
-		this.#persistCookies(response.url || url, null, response.headers);
+		this.#persistCookies(response.url, null, response.headers);
 
 		if (![ 301, 302, 303, 307, 308 ].includes(response.status))
 			return response;
@@ -140,7 +144,7 @@ export default class Browser {
 			directives = resHeaders.getSetCookie();
 
 		for (const directive of directives || []) {
-			this.cookieJar.setCookieSync(directive, url.href || url);
+			this.cookieJar.setCookieSync(directive, url);
 		}
 	}
 };
