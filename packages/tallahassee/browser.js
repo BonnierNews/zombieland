@@ -6,15 +6,15 @@ export default class Browser {
 		this.cookieJar = cookieJar || new jsdom.CookieJar();
 	}
 
-	async navigateTo (url, headers, jsdomConfig = {}) {
-		const response = this.fetch(url, headers && { headers });
+	async navigateTo (resource, options, jsdomConfig = {}) {
+		const response = this.fetch(resource, options);
 		return this.load(response, jsdomConfig);
 	}
 
-	async fetch (url, options = {}) {
-		url = typeof url === 'string' ? new URL(url, this.origin) : url;
-		const isRequest = url instanceof Request;
-		const request = isRequest ? url : new Request(url, {
+	async fetch (resource, options = {}) {
+		resource = typeof resource === 'string' ? new URL(resource, this.origin) : resource;
+		const isRequest = resource instanceof Request;
+		const request = isRequest ? resource : new Request(resource, {
 			...options,
 			redirect: 'manual'
 		});
