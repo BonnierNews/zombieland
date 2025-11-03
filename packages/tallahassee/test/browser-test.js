@@ -24,7 +24,7 @@ describe('Browser', () => {
 	});
 
 	describe('.fetch()', () => {
-		it('fetches resource', async () => {
+		it('fetches resource with url and options', async () => {
 			nock(url.origin)
 				.post(url.pathname)
 				.reply(function (path, body) {
@@ -38,6 +38,29 @@ describe('Browser', () => {
 				headers: { 'req-header': 'value' },
 				body: 'request body',
 			});
+
+			assert.equal(response.status, 200);
+			assert.equal(response.headers.get('res-header'), 'value');
+
+			const responseBody = await response.text();
+			assert.equal(responseBody, 'response body');
+		});
+
+		it('fetches resource with request', async () => {
+			nock(url.origin)
+				.post(url.pathname)
+				.reply(function (path, body) {
+					assert.equal(this.req.headers['req-header'], 'value');
+					assert.equal(body, 'request body');
+					return [ 200, 'response body', { 'res-header': 'value' } ];
+				});
+
+			const request = new Request(url, {
+				method: 'post',
+				headers: { 'req-header': 'value' },
+				body: 'request body',
+			})
+			const response = await browser.fetch(request);
 
 			assert.equal(response.status, 200);
 			assert.equal(response.headers.get('res-header'), 'value');
