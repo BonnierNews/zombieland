@@ -8,8 +8,8 @@ describe('ReverseProxy', () => {
 	beforeEach(() => nock.cleanAll());
 	after(() => nock.enableNetConnect());
 
-	const upstreamOrigin = 'http://localhost';
 	const proxyOrigin = 'https://tallahassee.zl';
+	const upstreamOrigin = 'http://localhost';
 
 	it('proxies request to upstream origin', async () => {
 		nock(upstreamOrigin)
@@ -26,12 +26,13 @@ describe('ReverseProxy', () => {
 		assert.equal(responseBody, 'response from upstream');
 	});
 
-	it('proxies request with headers', async () => {
+	it('proxies request with forwarding headers', async () => {
 		nock(upstreamOrigin)
 			.get('/resource')
 			.reply(function () {
 				const { headers } = this.req;
 				assert.equal(headers.host, 'tallahassee.zl');
+				assert.equal(headers.forwarded, 'proto=https;host=tallahassee.zl');
 				assert.equal(headers['x-forwarded-proto'], 'https');
 				assert.equal(headers['x-forwarded-host'], 'tallahassee.zl');
 				assert.equal(headers['req-header'], 'value');
@@ -39,10 +40,32 @@ describe('ReverseProxy', () => {
 			});
 
 		// eslint-disable-next-line no-new
-		new ReverseProxy(proxyOrigin, upstreamOrigin, {
-			'x-forwarded-proto': 'https',
-			'x-forwarded-host': 'tallahassee.zl',
+		new ReverseProxy(proxyOrigin, upstreamOrigin);
+
+		const response = await fetch(new URL('/resource', proxyOrigin), {
+			headers: { 'req-header': 'value' },
 		});
+		assert.equal(response.status, 200);
+	});
+
+	it('proxies request with headers', async () => {
+		nock(upstreamOrigin)
+			.get('/resource')
+			.reply(function () {
+				const { headers } = this.req;
+				assert.equal(headers.host, 'tallahassee.zl');
+				assert.equal(headers.via, '1.1 ZL');
+				assert.equal(headers['req-header'], 'value');
+				assert.equal(headers.forwarded, undefined);
+				assert.equal(headers['x-forwarded-proto'], undefined);
+				assert.equal(headers['x-forwarded-host'], undefined);
+				return [ 200 ];
+			});
+
+		// eslint-disable-next-line no-new
+		new ReverseProxy(proxyOrigin, upstreamOrigin, new Headers({
+			via: '1.1 ZL'
+		}));
 
 		const response = await fetch(new URL('/resource', proxyOrigin), {
 			headers: { 'req-header': 'value' },
