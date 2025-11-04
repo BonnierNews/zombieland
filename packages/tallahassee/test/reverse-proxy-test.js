@@ -19,7 +19,7 @@ describe('ReverseProxy', () => {
 		// eslint-disable-next-line no-new
 		new ReverseProxy(proxyOrigin, upstreamOrigin);
 
-		const response = await fetch(new URL('/resource', proxyOrigin));
+		const response = await fetch(proxyOrigin + '/resource');
 		assert.equal(response.status, 200);
 
 		const responseBody = await response.text();
@@ -42,7 +42,7 @@ describe('ReverseProxy', () => {
 		// eslint-disable-next-line no-new
 		new ReverseProxy(proxyOrigin, upstreamOrigin);
 
-		const response = await fetch(new URL('/resource', proxyOrigin), {
+		const response = await fetch(proxyOrigin + '/resource', {
 			headers: { 'req-header': 'value' },
 		});
 		assert.equal(response.status, 200);
@@ -67,7 +67,7 @@ describe('ReverseProxy', () => {
 			via: '1.1 ZL'
 		}));
 
-		const response = await fetch(new URL('/resource', proxyOrigin), {
+		const response = await fetch(proxyOrigin + '/resource', {
 			headers: { 'req-header': 'value' },
 		});
 		assert.equal(response.status, 200);
@@ -84,7 +84,7 @@ describe('ReverseProxy', () => {
 		// eslint-disable-next-line no-new
 		new ReverseProxy(proxyOrigin, upstreamOrigin);
 
-		const response = await fetch(new URL('/resource', proxyOrigin), {
+		const response = await fetch(proxyOrigin + '/resource', {
 			method: 'post',
 			body: 'request body',
 		});
@@ -109,7 +109,7 @@ describe('ReverseProxy', () => {
 			// eslint-disable-next-line no-new
 			new ReverseProxy(proxyOrigin, upstreamOrigin);
 
-			const response = await fetch(new URL('/resource', proxyOrigin), { method });
+			const response = await fetch(proxyOrigin + '/resource', { method });
 			assert.equal(response.status, 200);
 		});
 	});
@@ -123,15 +123,15 @@ describe('ReverseProxy', () => {
 		const proxy = new ReverseProxy(proxyOrigin, upstreamOrigin);
 
 		for (let i = 0; i < 3; i++) {
-			const response = await fetch(new URL('/resource', proxyOrigin));
+			const response = await fetch(proxyOrigin + '/resource');
 			assert.equal(response.status, 200);
 		}
 
 		proxy.clear();
 
-		await assert.rejects(fetch(new URL('/resource', proxyOrigin)));
+		await assert.rejects(fetch(proxyOrigin + '/resource'));
 
-		const upstreamResponse = await fetch(new URL('/resource', upstreamOrigin));
+		const upstreamResponse = await fetch(upstreamOrigin + '/resource'));
 		assert.equal(upstreamResponse.status, 200);
 	});
 
@@ -173,6 +173,7 @@ describe('ReverseProxy', () => {
 			new Promise(r => dom.window.addEventListener('fetchresponse', r)),
 		]);
 
+		assert.equal(dom.window.location.href, proxyOrigin + '/document');
 		assert.equal(dom.window.document.title, 'Document from upstream, Data from upstream');
 		assert.equal(dom.window.frames[0].document.title, 'Sub-document from upstream');
 	});
