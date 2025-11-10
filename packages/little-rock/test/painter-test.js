@@ -8,7 +8,7 @@ describe('Painter', () => {
 	describe('Web APIs', () => {
 		let dom, window, element;
 		beforeEach('load DOM', () => {
-			dom = new JSDOM('<div>HTMLElement</div>', { runScripts: 'outside-only' });
+			dom = new JSDOM('<div>HTMLElement</div>');
 			window = dom.window;
 			element = window.document.querySelector('div');
 		});
@@ -297,7 +297,7 @@ describe('Painter', () => {
 						<img>
 					</div>
 				</article>
-			`, { runScripts: 'outside-only' });
+			`);
 			window = dom.window;
 			ancestorElement = window.document.querySelector('article');
 			parentElement = ancestorElement.firstElementChild;
