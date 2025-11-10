@@ -72,7 +72,7 @@ describe('Painter', () => {
 				});
 			});
 
-			it('.scroll(x-coord, y-coord)', () => {
+			it('.scroll(xCoord, yCoord)', () => {
 				const pendingScroll = new Promise(r =>
 					element.addEventListener('scroll', r, { once: true })
 				);
@@ -96,7 +96,7 @@ describe('Painter', () => {
 				return pendingScroll;
 			});
 
-			it('.scrollTo(x-coord, y-coord)', () => {
+			it('.scrollTo(xCoord, yCoord)', () => {
 				const pendingScroll = new Promise(r =>
 					element.addEventListener('scroll', r, { once: true })
 				);
@@ -120,7 +120,7 @@ describe('Painter', () => {
 				return pendingScroll;
 			});
 
-			it('.scrollBy(x-coord, y-coord)', () => {
+			it('.scrollBy(xCoord, yCoord)', () => {
 				const pendingScroll = new Promise(r =>
 					element.addEventListener('scroll', r, { once: true })
 				);
@@ -201,7 +201,7 @@ describe('Painter', () => {
 				assert.equal(window.pageYOffset, 10);
 			});
 
-			it('.scroll(x-coord, y-coord)', () => {
+			it('.scroll(xCoord, yCoord)', () => {
 				const pendingScroll = new Promise(r =>
 					window.addEventListener('scroll', r, { once: true })
 				);
@@ -229,7 +229,7 @@ describe('Painter', () => {
 				return pendingScroll;
 			});
 
-			it('.scrollTo(x-coord, y-coord)', () => {
+			it('.scrollTo(xCoord, yCoord)', () => {
 				const pendingScroll = new Promise(r =>
 					window.addEventListener('scroll', r, { once: true })
 				);
@@ -257,7 +257,7 @@ describe('Painter', () => {
 				return pendingScroll;
 			});
 
-			it('.scrollBy(x-coord, y-coord)', () => {
+			it('.scrollBy(xCoord, yCoord)', () => {
 				const pendingScroll = new Promise(r =>
 					window.addEventListener('scroll', r, { once: true })
 				);
