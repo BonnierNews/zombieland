@@ -16,19 +16,16 @@ const axisBySide = Object.fromEntries(
 );
 
 export default class Painter {
-	stylesheet = new Stylesheet();
-	elementStyles = new Map();
-	renderTree = new Map();
 	window;
+	renderTree = new Map();
+	elementStyles = new Map();
+	stylesheet = new Stylesheet();
 
 	constructor (options = {}) {
+		if (options.window)
+			this.init(options.window);
 		if (options.stylesheet)
 			this.stylesheet = options.stylesheet;
-
-		if (options.dom)
-			this.init(options.dom.window);
-		else if (options.window)
-			this.init(options.window);
 	}
 
 	init (window) {
