@@ -36,7 +36,9 @@ test('simple navigation', () => {
 });
 
 test('detailed navigation', () => {
-	const response = await browser.fetch('/', { 'Cookie': 'signed-in=1' });
+	const response = await browser.fetch('/', {
+		headers: { 'Cookie': 'signed-in=1' },
+	});
 	assert.equal(response.status, 200);
 
 	const dom = await browser.load(response, { runScripts: 'dangerously' });
