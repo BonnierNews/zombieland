@@ -557,7 +557,6 @@ it('multiple scroll levels compound', () => {
 ## Todo
 
 - [ ] Means to emulate fixed / sticky / hidden layout.
-- [ ] Further implement web APIs such as setters for `Element.scrollLeft` / `.scrollTop`
 - [ ] Cache for layout calculation. Clear on paints and DOM updates. Mutation observer would work it it were synchronous.
 - [x] Paint method behaves different when used on an element and a selector. Maybe it should. Styles applied to element will overwrite previous styles. Styles applied to selector will be appended to stylesheet.
 - [x] Scrolling behavior is **very** bare bones.

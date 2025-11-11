@@ -36,34 +36,34 @@ export default class Painter {
 		const { innerWidth, innerHeight } = window;
 		this.paint(window, { width: innerWidth, height: innerHeight, scrollHeight: 'auto' }, null);
 
-		Object.defineProperties(window, {
-			innerWidth: { get: forward(Painter.#getDomRect, this, 'width', false, window) },
-			innerHeight: { get: forward(Painter.#getDomRect, this, 'height', false, window) },
-			scrollX: { get: forward(Painter.#getDomRect, this, 'scrollX', false, window) },
-			scrollY: { get: forward(Painter.#getDomRect, this, 'scrollY', false, window) },
-			pageXOffset: { get: forward(Painter.#getDomRect, this, 'scrollX', false, window) },
-			pageYOffset: { get: forward(Painter.#getDomRect, this, 'scrollY', false, window) },
-			scroll: { value: forward(Painter.#scrollTo, this) },
-			scrollTo: { value: forward(Painter.#scrollTo, this) },
-			scrollBy: { value: forward(Painter.#scrollBy, this) },
-		});
-		Object.defineProperties(window.Element.prototype, {
-			scrollWidth: { get: forward(Painter.#getDomRect, this, 'scrollWidth') },
-			scrollHeight: { get: forward(Painter.#getDomRect, this, 'scrollHeight') },
-			scrollLeft: { get: forward(Painter.#getDomRect, this, 'scrollX') },
-			scrollTop: { get: forward(Painter.#getDomRect, this, 'scrollY') },
-			scroll: { value: forward(Painter.#scrollTo, this) },
-			scrollTo: { value: forward(Painter.#scrollTo, this) },
-			scrollBy: { value: forward(Painter.#scrollBy, this) },
-			scrollIntoView: { value: forward(Painter.#scrollIntoView, this) },
-			getBoundingClientRect: { value: forward(Painter.#getDomRect, this, [ 'width', 'height', 'x', 'y', 'left', 'right', 'top', 'bottom' ], true) },
-		});
-		Object.defineProperties(window.HTMLElement.prototype, {
-			offsetWidth: { get: forward(Painter.#getDomRect, this, 'width') },
-			offsetHeight: { get: forward(Painter.#getDomRect, this, 'height') },
-			offsetLeft: { get: forward(Painter.#getDomRect, this, 'x') },
-			offsetTop: { get: forward(Painter.#getDomRect, this, 'y') },
-		});
+		Object.defineProperties(window, reflectPainter(this, {
+			innerWidth: { get: [ Painter.#getDomRect, 'width', false, window ] },
+			innerHeight: { get: [ Painter.#getDomRect, 'height', false, window ] },
+			scrollX: { get: [ Painter.#getDomRect, 'scrollX', false, window ] },
+			scrollY: { get: [ Painter.#getDomRect, 'scrollY', false, window ] },
+			pageXOffset: { get: [ Painter.#getDomRect, 'scrollX', false, window ] },
+			pageYOffset: { get: [ Painter.#getDomRect, 'scrollY', false, window ] },
+			scroll: { value: [ Painter.#scrollTo ] },
+			scrollTo: { value: [ Painter.#scrollTo ] },
+			scrollBy: { value: [ Painter.#scrollBy ] },
+		}));
+		Object.defineProperties(window.Element.prototype, reflectPainter(this, {
+			scrollWidth: { get: [ Painter.#getDomRect, 'scrollWidth' ] },
+			scrollHeight: { get: [ Painter.#getDomRect, 'scrollHeight' ] },
+			scrollLeft: { get: [ Painter.#getDomRect, 'scrollX' ], set: [ Painter.#scrollOneTo, 'left' ] },
+			scrollTop: { get: [ Painter.#getDomRect, 'scrollY' ], set: [ Painter.#scrollOneTo, 'top' ] },
+			scroll: { value: [ Painter.#scrollTo ] },
+			scrollTo: { value: [ Painter.#scrollTo ] },
+			scrollBy: { value: [ Painter.#scrollBy ] },
+			scrollIntoView: { value: [ Painter.#scrollIntoView ] },
+			getBoundingClientRect: { value: [ Painter.#getDomRect, [ 'width', 'height', 'x', 'y', 'left', 'right', 'top', 'bottom' ], true ] },
+		}));
+		Object.defineProperties(window.HTMLElement.prototype, reflectPainter(this, {
+			offsetWidth: { get: [ Painter.#getDomRect, 'width' ] },
+			offsetHeight: { get: [ Painter.#getDomRect, 'height' ] },
+			offsetLeft: { get: [ Painter.#getDomRect, 'x' ] },
+			offsetTop: { get: [ Painter.#getDomRect, 'y' ] },
+		}));
 
 		return this;
 	}
@@ -83,13 +83,13 @@ export default class Painter {
 		return this;
 	}
 
-	getLayout (source, relative, cache, accumulated) {
+	getLayout (element, relative, cache, currentStack) {
 		cache = cache || new Map();
-		if (cache.has(source)) return cache.get(source);
+		if (cache.has(element)) return cache.get(element);
 
 		const compoundedStyles = [
-			...this.stylesheet.getMatchingStyles(source),
-			this.elementStyles.get(source),
+			...this.stylesheet.getMatchingStyles(element),
+			this.elementStyles.get(element),
 		]
 			.filter(Boolean)
 			.reduce((compounded, current) => {
@@ -98,15 +98,15 @@ export default class Painter {
 
 		const autoAxes = axes.filter(a => compoundedStyles[a] === 'auto');
 		if (autoAxes.length) {
-			if (accumulated) {
-				for (const a of autoAxes) compoundedStyles[a] = accumulated[a];
+			if (currentStack) {
+				for (const a of autoAxes) compoundedStyles[a] = currentStack[a];
 			}
 			else {
 				const stack = Object.fromEntries(autoAxes.map(a => [ a, 0 ]));
-				const siblings = this.renderTree.get(source)?.parent?.children;
+				const siblings = this.renderTree.get(element)?.parent?.children;
 
 				for (const e of siblings || []) {
-					if (e === source) break;
+					if (e === element) break;
 
 					const cs = this.getLayout(e, false, cache, stack);
 					for (const a of autoAxes) {
@@ -121,7 +121,7 @@ export default class Painter {
 		const autoSides = allSides.filter(s => compoundedStyles[s] === 'auto');
 		if (autoSides.length) {
 			const stack = Object.fromEntries(autoSides.map(s => [ s, 0 ]));
-			const children = this.#getChildElements(source);
+			const children = this.#getChildElements(element);
 
 			if (Object.hasOwn(stack, 'width')) delete stack.scrollWidth;
 			if (Object.hasOwn(stack, 'height')) delete stack.scrollHeight;
@@ -138,7 +138,7 @@ export default class Painter {
 		}
 
 		if (relative) {
-			this.#getAncestors(source)
+			this.#getAncestors(element)
 				.map(ancestor => this.elementStyles.get(ancestor))
 				.filter(Boolean)
 				.reduce((styles, ancestorStyles) => {
@@ -150,7 +150,7 @@ export default class Painter {
 		}
 
 		const layout = new Layout(compoundedStyles);
-		cache.set(source, layout);
+		cache.set(element, layout);
 		return layout;
 	}
 
@@ -209,6 +209,10 @@ export default class Painter {
 		this.dispatchEvent(new painter.window.Event('scroll'));
 	}
 
+	static #scrollOneTo (painter, scrollAxis, value) {
+		Painter.#scrollTo.call(this, painter, { [scrollAxis]: value });
+	}
+
 	static #scrollBy (painter, scrollXDelta, scrollYDelta) {
 		if (typeof scrollXDelta === 'object') {
 			({ left: scrollXDelta, top: scrollYDelta } = scrollXDelta);
@@ -235,8 +239,20 @@ export default class Painter {
 	}
 };
 
-function forward (fn, ...forwarded) {
-	return function (...args) {
-		return Reflect.apply(fn, this, [ ...forwarded, ...args ]);
-	};
+function reflectPainter (painter, descriptorsByProp) {
+	const props = {};
+
+	for (const [ prop, descriptor ] of Object.entries(descriptorsByProp)) {
+		props[prop] = {};
+
+		for (const [ key, descriptorArgs ] of Object.entries(descriptor)) {
+			const [ fn, ...rArgs ] = descriptorArgs;
+
+			props[prop][key] = function (...args) {
+				return Reflect.apply(fn, this, [ painter, ...rArgs, ...args ]);
+			};
+		}
+	}
+
+	return props;
 }

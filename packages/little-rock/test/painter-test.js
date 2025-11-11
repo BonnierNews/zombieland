@@ -56,11 +56,25 @@ describe('Painter', () => {
 			});
 
 			it('.scrollLeft', () => {
+				const pendingScroll = captureScroll(element);
+
 				assert.equal(element.scrollLeft, 20);
+
+				element.scrollLeft *= 2;
+				assert.equal(element.scrollLeft, 40);
+
+				return pendingScroll;
 			});
 
 			it('.scrollTop', () => {
+				const pendingScroll = captureScroll(element);
+
 				assert.equal(element.scrollTop, 10);
+
+				element.scrollTop *= 2
+				assert.equal(element.scrollTop, 20);
+
+				return pendingScroll;
 			});
 
 			it('.getBoundingClientRect()', () => {
