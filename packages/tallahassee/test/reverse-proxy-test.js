@@ -131,7 +131,7 @@ describe('ReverseProxy', () => {
 
 		await assert.rejects(fetch(proxyOrigin + '/resource'));
 
-		const upstreamResponse = await fetch(upstreamOrigin + '/resource'));
+		const upstreamResponse = await fetch(upstreamOrigin + '/resource');
 		assert.equal(upstreamResponse.status, 200);
 	});
 
