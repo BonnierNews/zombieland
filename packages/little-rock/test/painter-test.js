@@ -71,7 +71,7 @@ describe('Painter', () => {
 
 				assert.equal(element.scrollTop, 10);
 
-				element.scrollTop *= 2
+				element.scrollTop *= 2;
 				assert.equal(element.scrollTop, 20);
 
 				return pendingScroll;
@@ -613,7 +613,7 @@ function captureScroll (target) {
  	const window = target.window || target.ownerDocument.defaultView;
 	return new Promise(resolve => {
 		target.addEventListener('scroll', function (...args) {
-			resolve([ this, args ])
+			resolve([ this, args ]);
 		}, { once: true });
 	})
 		.then(([ handlerThis, handlerArgs ]) => {
