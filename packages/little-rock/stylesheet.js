@@ -4,12 +4,13 @@ export default class Stylesheet {
 	rules = [];
 	ruleSheet = {};
 
-	constructor (...ruleSets) {
-		this.add(...ruleSets);
+	constructor (ruleSet) {
+		if (ruleSet)
+			this.add(ruleSet);
 	}
 
-	add (...ruleSets) {
-		Object.assign(this.ruleSheet, ...ruleSets);
+	add (ruleSet) {
+		Object.assign(this.ruleSheet, ruleSet);
 		this.rules.length = 0;
 
 		for (const [ selectorList, styles ] of Object.entries(this.ruleSheet)) {
