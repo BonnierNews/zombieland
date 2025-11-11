@@ -18,8 +18,12 @@ describe('Painter', () => {
 			painter = new Painter({ window });
 		});
 
-		beforeEach('paint non-default scroll position', () => {
+		beforeEach('paint non-default viewport', () => {
 			painter.paint(window, {
+				width: 900,
+				height: 1600,
+				scrollWidth: 1000,
+				scrollHeight: 2000,
 				scrollX: 20,
 				scrollY: 10,
 			});
@@ -40,7 +44,7 @@ describe('Painter', () => {
 
 		describe('Element', () => {
 			beforeEach('is instance of Element', () => {
-				assert.equal(element instanceof dom.window.Element, true, 'expected instance of Element');
+				assert(element instanceof dom.window.Element);
 			});
 
 			it('.scrollWidth', () => {
@@ -73,9 +77,7 @@ describe('Painter', () => {
 			});
 
 			it('.scroll(xCoord, yCoord)', () => {
-				const pendingScroll = new Promise(r =>
-					element.addEventListener('scroll', r, { once: true })
-				);
+				const pendingScroll = captureScroll(element);
 
 				element.scroll(30, 50);
 				assert.equal(element.scrollLeft, 30);
@@ -85,9 +87,7 @@ describe('Painter', () => {
 			});
 
 			it('.scroll(options)', () => {
-				const pendingScroll = new Promise(r =>
-					element.addEventListener('scroll', r, { once: true })
-				);
+				const pendingScroll = captureScroll(element);
 
 				element.scroll({ left: 30, top: 50 });
 				assert.equal(element.scrollLeft, 30);
@@ -97,9 +97,7 @@ describe('Painter', () => {
 			});
 
 			it('.scrollTo(xCoord, yCoord)', () => {
-				const pendingScroll = new Promise(r =>
-					element.addEventListener('scroll', r, { once: true })
-				);
+				const pendingScroll = captureScroll(element);
 
 				element.scrollTo(30, 50);
 				assert.equal(element.scrollLeft, 30);
@@ -109,9 +107,7 @@ describe('Painter', () => {
 			});
 
 			it('.scrollTo(options)', () => {
-				const pendingScroll = new Promise(r =>
-					element.addEventListener('scroll', r, { once: true })
-				);
+				const pendingScroll = captureScroll(element);
 
 				element.scrollTo({ left: 30, top: 50 });
 				assert.equal(element.scrollLeft, 30);
@@ -121,9 +117,7 @@ describe('Painter', () => {
 			});
 
 			it('.scrollBy(xCoord, yCoord)', () => {
-				const pendingScroll = new Promise(r =>
-					element.addEventListener('scroll', r, { once: true })
-				);
+				const pendingScroll = captureScroll(element);
 
 				element.scrollBy(10, 10);
 				assert.equal(element.scrollLeft, 30);
@@ -133,9 +127,7 @@ describe('Painter', () => {
 			});
 
 			it('.scrollBy(options)', () => {
-				const pendingScroll = new Promise(r =>
-					element.addEventListener('scroll', r, { once: true })
-				);
+				const pendingScroll = captureScroll(element);
 
 				element.scrollBy({ left: 10, top: 10 });
 				assert.equal(element.scrollLeft, 30);
@@ -147,7 +139,7 @@ describe('Painter', () => {
 
 		describe('HTMLElement', () => {
 			beforeEach('is instance of HTMLElement', () => {
-				assert.equal(element instanceof dom.window.HTMLElement, true, 'expected instance of HTMLElement');
+				assert(element instanceof dom.window.HTMLElement);
 			});
 
 			it('.offsetWidth', () => {
@@ -168,13 +160,8 @@ describe('Painter', () => {
 		});
 
 		describe('Window', () => {
-			beforeEach('paint non-default viewport', () => {
-				painter.paint(window, {
-					width: 900,
-					height: 1600,
-					scrollWidth: 1000,
-					scrollHeight: 2000,
-				});
+			beforeEach('is instance of Window', () => {
+				assert(window instanceof dom.window.Window);
 			});
 
 			it('.innerWidth', () => {
@@ -202,9 +189,7 @@ describe('Painter', () => {
 			});
 
 			it('.scroll(xCoord, yCoord)', () => {
-				const pendingScroll = new Promise(r =>
-					window.addEventListener('scroll', r, { once: true })
-				);
+				const pendingScroll = captureScroll(window);
 
 				window.scroll(30, 60);
 				assert.equal(window.scrollX, 30);
@@ -216,9 +201,7 @@ describe('Painter', () => {
 			});
 
 			it('.scroll(options)', () => {
-				const pendingScroll = new Promise(r =>
-					window.addEventListener('scroll', r, { once: true })
-				);
+				const pendingScroll = captureScroll(window);
 
 				window.scroll({ left: 30, top: 60 });
 				assert.equal(window.scrollX, 30);
@@ -230,9 +213,7 @@ describe('Painter', () => {
 			});
 
 			it('.scrollTo(xCoord, yCoord)', () => {
-				const pendingScroll = new Promise(r =>
-					window.addEventListener('scroll', r, { once: true })
-				);
+				const pendingScroll = captureScroll(window);
 
 				window.scrollTo(30, 60);
 				assert.equal(window.scrollX, 30);
@@ -244,9 +225,7 @@ describe('Painter', () => {
 			});
 
 			it('.scrollTo(options)', () => {
-				const pendingScroll = new Promise(r =>
-					window.addEventListener('scroll', r, { once: true })
-				);
+				const pendingScroll = captureScroll(window);
 
 				window.scrollTo({ left: 30, top: 60 });
 				assert.equal(window.scrollX, 30);
@@ -258,9 +237,7 @@ describe('Painter', () => {
 			});
 
 			it('.scrollBy(xCoord, yCoord)', () => {
-				const pendingScroll = new Promise(r =>
-					window.addEventListener('scroll', r, { once: true })
-				);
+				const pendingScroll = captureScroll(window);
 
 				window.scrollBy(10, 10);
 				assert.equal(window.scrollX, 30);
@@ -272,9 +249,7 @@ describe('Painter', () => {
 			});
 
 			it('.scrollBy(options)', () => {
-				const pendingScroll = new Promise(r =>
-					window.addEventListener('scroll', r, { once: true })
-				);
+				const pendingScroll = captureScroll(window);
 
 				window.scrollBy({ left: 10, top: 10 });
 				assert.equal(window.scrollX, 30);
@@ -456,14 +431,14 @@ describe('Painter', () => {
 			assert.deepEqual(h1.offsetHeight, 30);
 		});
 
-		it('element styles trump stylesheet styles', async () => {
+		it('element styles supersede stylesheet styles', async () => {
 			const dom = new JSDOM(`
 				<div id="element">HTMLElement</div>
 			`);
 			const stylesheet = new Stylesheet({
 				'#element': { width: 100, height: 100 },
 			});
-			const painter = new Painter({ stylesheet, dom });
+			const painter = new Painter({ window: dom.window, stylesheet });
 
 			const element = dom.window.document.getElementById('element');
 			painter.paint(element, { width: 200 });
@@ -479,7 +454,7 @@ describe('Painter', () => {
 				<div>HTMLElement</div>
 				<span>HTMLSpanElement</span>
 			`);
-			painter = new Painter({ dom });
+			painter = new Painter(dom);
 			divs = dom.window.document.querySelectorAll('div');
 			spans = dom.window.document.querySelectorAll('span');
 			elements = dom.window.document.querySelectorAll('*');
@@ -556,7 +531,7 @@ describe('Painter', () => {
 					<img />
 				</article>
 			`);
-			painter = new Painter({ dom });
+			painter = new Painter(dom);
 		});
 
 		[
@@ -619,3 +594,21 @@ describe('Painter', () => {
 		});
 	});
 });
+
+function captureScroll (target) {
+ 	const window = target.window || target.ownerDocument.defaultView;
+	return new Promise(resolve => {
+		target.addEventListener('scroll', function (...args) {
+			resolve([ this, args ])
+		}, { once: true });
+	})
+		.then(([ handlerThis, handlerArgs ]) => {
+			assert.equal(handlerThis, target);
+			assert.equal(handlerArgs.length, 1);
+
+			const [ handlerEvent ] = handlerArgs;
+			assert(handlerEvent instanceof window.Event);
+			assert.equal(handlerEvent.type, 'scroll');
+			assert.equal(handlerEvent.target, target);
+		});
+}
