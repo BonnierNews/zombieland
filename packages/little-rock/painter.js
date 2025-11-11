@@ -22,10 +22,12 @@ export default class Painter {
 	stylesheet = new Stylesheet();
 
 	constructor (options = {}) {
-		if (options.window)
-			this.init(options.window);
-		if (options.stylesheet)
+		const { window, stylesheet } = options;
+
+		if (stylesheet)
 			this.stylesheet = options.stylesheet;
+		if (window)
+			this.init(window);
 	}
 
 	init (window) {
@@ -204,8 +206,6 @@ export default class Painter {
 		}
 
 		painter.paint(this, { scrollX, scrollY });
-
-		// const Event = this.nodeName ? this.ownerDocument.defaultView.Event : window.Event;
 		this.dispatchEvent(new painter.window.Event('scroll'));
 	}
 
