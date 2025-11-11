@@ -144,13 +144,33 @@ it('paints elements by selector', () => {
   const dom = new JSDOM('');
 
   const painter = new Painter(dom);
-  painter.paint('div', { height: 200, y: 100 });
+  painter.paint('div', { width: 200, height: 200 });
 
   const element = dom.window.document.createElement('div');
-  dom.window.document.body.appendChild(element);
+  dom.window.document.body.append(element);
+  painter.paint(element, { height: 400, y: 100 });
 
-  assert.equal(element.offsetHeight, 200);
+  assert.equal(element.offsetWidth, 200);
+  assert.equal(element.offsetHeight, 400);
   assert.equal(element.offsetTop, 100);
+});
+
+it('styles painted with element supersede styles painted with selector', () => {
+  const dom = new JSDOM('');
+
+  const painter = new Painter(dom);
+  painter.paint('div', { width: 200, height: 200 });
+
+  const element1 = dom.window.document.createElement('div');
+  const element2 = dom.window.document.createElement('div');
+  dom.window.document.body.append(element1, element2);
+  painter.paint(element2, { height: 400 });
+
+  assert.equal(element1.offsetWidth, 200);
+  assert.equal(element1.offsetHeight, 200);
+
+  assert.equal(element2.offsetWidth, 200);
+  assert.equal(element2.offsetHeight, 400);
 });
 ```
 
@@ -186,8 +206,9 @@ it('can not base layout on the document', () => {
   painter.paint(listItem, { y: 20 }); // no parent
 
   assert.equal(list.offsetTop, 100);
-  assert.notWqual(listItem.offsetTop, 120);
-  assert.equal(listItem.offsetTop, 20);
+  assert.fail(() => {
+  	assert.equal(listItem.offsetTop, 120);
+  });
 });
 ```
 
