@@ -15,7 +15,6 @@ A painter module for emulating basic layout. Useful for testing code dealing wit
   - [Stylesheet](#stylesheet)
   	- [new Stylesheet(ruleSet)](#new-stylesheetruleset)
   	- [stylesheet.add(ruleSet)](#stylesheetaddruleset)
-- [Todo](#todo)
 
 ## Basic usage
 
