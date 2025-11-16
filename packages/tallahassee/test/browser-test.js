@@ -59,7 +59,7 @@ describe('Browser', () => {
 				method: 'post',
 				headers: { 'req-header': 'value' },
 				body: 'request body',
-			})
+			});
 			const response = await browser.fetch(request);
 
 			assert.equal(response.status, 200);

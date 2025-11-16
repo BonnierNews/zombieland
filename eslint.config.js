@@ -103,7 +103,7 @@ export default [
 	},
 	{
 		ignores: [
-			'index.cjs',
+			'zombieland.cjs',
 		],
 	},
 ];
