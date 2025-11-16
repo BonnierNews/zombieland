@@ -11,5 +11,8 @@
   },
   "peerDependencies": {
     "jsdom": "^25.0.1"
+  },
+  "optionalDependencies": {
+    "whatwg-fetch": "^3.6.20"
   }
 }
