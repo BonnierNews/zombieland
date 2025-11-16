@@ -232,12 +232,12 @@ reverseProxy.clear();
 
 ## Todo
 
-- [x] Use node `fetch` / `Response`
-	- [x] Stable version of Nock
-- [x] In-page navigation (clicking links etc.)
 - [ ] Reloading page
 - [ ] Unload browser and all its active jsdom instances
 - [ ] Expose network requests
+- [x] Use node `fetch` / `Response` / `Request`
+	- [x] Stable version of Nock
+- [x] In-page navigation (clicking links etc.)
 - [x] Containing requests to the app is currently done by setting up a `nock` scope around app origin which intercepts all reqs and proxies them through `supertest`. Not ideal for a bunch of reasons:
 	- [x] There is no built in way to clear a specific scope - [creative workaround](https://github.com/nock/nock/issues/1495#issuecomment-499594455)
 - [x] Scrap use of SuperTest. It's incorrectly used as an HTTP lib because of its ability to _make requests to a server_. Not having a listening server makes handling of client side requests messy. Calls to `XMLHttpRequest` needs to be intercepted and cookies will need to be handled manually. Also having the consumer starting / stopping their server once per test process would be more performant than doing it adhoc for each request.
