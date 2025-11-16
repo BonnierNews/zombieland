@@ -13,10 +13,13 @@ Resolver enables "binding" script tags to files making the test suite less verbo
 - [Basic usage](#basic-usage)
 - [API](#api)
   - [Script](#script)
-    - [new Script(code)](#new-scriptcode)
     - [new Script(filePath)](#new-scriptfilepath)
+    - [new Script(code)](#new-scriptcode)
     - [new Script(identifier, code)](#new-scriptidentifier-code)
     - [script.evaluate(context)](#scriptevaluatecontext)
+  - [ResourceLoader](#resourceloader)
+    - [new ResourceLoader([options, ...args])](#new-resourceloaderoptions-args)
+    - [resourceLoader.runScripts(dom[, options])](#resourceloaderrunscriptsdom-options)
 
 ## Basic usage
 
@@ -136,6 +139,60 @@ it('evaluates code multiple times', async () => {
   assert.equal(exports[0].default, 'once!');
   assert.equal(exports[1].default, 'twice!');
   assert.equal(exports[1].times, 1);
+});
+```
+
+### `ResourceLoader`
+
+An extension of the jsdom [`ResourceLoader`](https://github.com/jsdom/jsdom/blob/main/README.md#advanced-configuration) with additional support for resolving DOM nodes into wichita scripts and script execution.
+
+> May be subject to change in the future. Keeping documentation breif. Take a look in the [Source code resource example](https://github.com/BonnierNews/zombieland/blob/main/examples/source-code-resource) for more details.
+
+```js
+import { ResourceLoader } from '@zombieland/wichita';
+```
+
+#### `new ResourceLoader([options, ...args])`
+
+Creates a new ResourceLoader instance.
+
+- `options` `<Object>`
+	- `resolveTag` Function to resolve a HTMLScriptElement into path to a local file to execute
+- `args` Arguments to forward to jsdom `ResourceLoader` constructor
+	
+#### `resourceLoader.runScripts(dom[, options])`
+
+Iterates through document script tags and evaluates code with `Script`. Uses the `resolveTag` function to resolve script element into arguments for `Script` constructor.
+
+- `dom` `<JSDOM>` DOM to execute scripts in
+- `options` `<Object>`
+	- `noModule` `Boolean` When set to `true` will skip `script[module]`. **Default:** `false`
+- Returns: `<Promise>` Resolves with `undefined`
+
+```js
+it('runs document scripts', async () => {
+	const resourceLoader = new ResourceLoader();
+  const dom = new JSDOM(
+	  '<script src="/scripts/main.js"></script>', 
+	  { resources: resourceLoader, runScripts: "outside-only" }
+  );
+  await resourceLoader.runScripts();
+});
+
+it('runs local source code', async () => {
+	const resourceLoader = new ResourceLoader({
+		resolveTag (script) {
+			if (script.src.endsWith('/scripts/main.js')) {
+				const localSourceCodeFile = import.meta.resolve(path.join(import.meta.dirname, '../src/scripts/main.js'));
+				return localSourceCodeFile;
+			}
+		}
+	});
+  const dom = new JSDOM(
+	  '<script src="/scripts/main.js"></script>', 
+	  { resources: resourceLoader, runScripts: "outside-only" }
+  );
+  await resourceLoader.runScripts();
 });
 ```
 
