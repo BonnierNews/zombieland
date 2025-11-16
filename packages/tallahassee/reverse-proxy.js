@@ -5,9 +5,12 @@ const httpVerbs = [ 'DELETE', 'GET', 'HEAD', 'MERGE', 'OPTIONS', 'PATCH', 'POST'
 export default class ReverseProxy {
 	#interceptors = [];
 
-	constructor (proxyOrigin, upstreamOrigin, headers = {}) {
+	constructor (proxyOrigin, upstreamOrigin, headers) {
+		this.proxyOrigin = proxyOrigin;
 		this.upstreamOrigin = upstreamOrigin;
-		this.headers = headers;
+		this.headers = headers ?
+			new Headers(headers) :
+			this.buildForwardingHeaders();
 
 		const proxy = this;
 		for (const verb of httpVerbs) {
@@ -26,11 +29,25 @@ export default class ReverseProxy {
 			nock.removeInterceptor(interceptor);
 	}
 
-	async #forward (req, path, body, callback) {
-		const { method, headers: reqHeaders } = req;
-		const headers = { ...this.headers, ...reqHeaders };
+	buildForwardingHeaders () {
+		const proxyOriginURL = new URL(this.proxyOrigin);
+		const { protocol, host } = proxyOriginURL;
+		const proto = protocol.slice(0, -1);
+		return new Headers({
+			'forwarded': `proto=${proto};host=${host}`,
+			'x-forwarded-proto': proto,
+			'x-forwarded-host': host,
+		});
+	}
 
+	async #forward (req, path, body, callback) {
 		try {
+			const { method, headers: reqHeaders } = req;
+			const headers = Object.fromEntries([
+				...this.headers.entries(),
+				...Object.entries(reqHeaders),
+			]);
+
 			const res = await fetch(new URL(path, this.upstreamOrigin), {
 				method,
 				headers,

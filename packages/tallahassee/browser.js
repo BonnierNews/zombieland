@@ -6,9 +6,9 @@ export default class Browser {
 		this.cookieJar = cookieJar || new jsdom.CookieJar();
 	}
 
-	async navigateTo (resource, options, jsdomConfig = {}) {
-		const response = this.fetch(resource, options);
-		return this.load(response, jsdomConfig);
+	async navigateTo (resource, fetchOptions, loadOptions) {
+		const response = this.fetch(resource, fetchOptions);
+		return this.load(response, loadOptions);
 	}
 
 	async fetch (resource, options = {}) {
@@ -39,24 +39,24 @@ export default class Browser {
 		return this.fetch(response.headers.get('location'), redirectOptions);
 	}
 
-	async load (pendingResponse, jsdomConfig = {}) {
-		const response = await pendingResponse;
-		const isResponse = response instanceof Response;
-		const document = isResponse ? await response.text() : response;
+	async load (resource, options = {}) {
+		resource = await resource;
+		const isResponse = resource instanceof Response;
+		const document = isResponse ? await resource.text() : resource;
 
 		return new jsdom.JSDOM(document, {
-			runScripts: 'outside-only',
-			pretendToBeVisual: true,
-			...jsdomConfig,
+			pretendToBeVisual: Boolean(options?.painter),
+			runScripts: options.resources && 'outside-only',
+			...options,
 			...(isResponse && {
-				url: response.url || undefined,
-				contentType: response.headers.get('content-type') || undefined,
+				url: resource.url || undefined,
+				contentType: resource.headers.get('content-type') || undefined,
 			}),
 			cookieJar: this.cookieJar,
 			beforeParse: window => {
-				jsdomConfig.resources?.beforeParse?.(window);
-				jsdomConfig.painter?.beforeParse(window);
-				jsdomConfig.beforeParse?.(window);
+				options.painter?.beforeParse(window);
+				options.resources?.beforeParse?.(window);
+				options.beforeParse?.(window);
 			}
 		});
 	}
@@ -104,7 +104,7 @@ export default class Browser {
 
 			function captureFormElementInvalid (event) {
 				cleanUp();
-				return reject(event)
+				return reject(event);
 			}
 
 			function runDefault (event, url, options) {
