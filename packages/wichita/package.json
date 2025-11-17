@@ -14,5 +14,8 @@
   },
   "optionalDependencies": {
     "whatwg-fetch": "^3.6.20"
+  },
+  "devDependencies": {
+    "package-component": "file:test/files/package-component"
   }
 }
