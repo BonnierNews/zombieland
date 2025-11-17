@@ -38,13 +38,13 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.39.1",
-		"chai": "^5.1.1",
+		"chai": "^6.2.1",
 		"esbuild": "^0.24.0",
 		"eslint": "^9.39.1",
 		"globals": "^16.5.0",
 		"jsdom": "^27.2.0",
 		"lodash.pick": "^4.4.0",
-		"mocha": "^10.7.3",
+		"mocha": "^11.7.5",
 		"mocha-cakes-2": "^3.3.0"
 	},
 	"bugs": {
