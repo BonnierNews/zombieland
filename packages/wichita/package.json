@@ -10,6 +10,12 @@
     "test": "mocha"
   },
   "peerDependencies": {
-    "jsdom": "^25.0.1"
+    "jsdom": "^27.2.0"
+  },
+  "optionalDependencies": {
+    "whatwg-fetch": "^3.6.20"
+  },
+  "devDependencies": {
+    "package-component": "file:test/files/package-component"
   }
 }

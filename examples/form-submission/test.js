@@ -116,7 +116,7 @@ Feature('form submission', () => {
 		Then('no navigation occurs', async () => {
 			await assert.rejects(pendingResponse, event => {
 				assert(event instanceof dom.window.Event);
-				assert.equal(event.type, 'submit')
+				assert.equal(event.type, 'submit');
 				assert.equal(event.defaultPrevented, true);
 				return true;
 			});
