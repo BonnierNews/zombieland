@@ -107,6 +107,7 @@ it('evaluates code with imports', async () => {
   const script = new Script('./source-entry.js');
   
   await script.evaluate(dom.window);
+
   assert.equal(dom.window.document.title, 'initial value, edit from source entry, edit from source component');
 });
 
@@ -118,24 +119,25 @@ it('evaluates code with exports', async () => {
   `);
   
   const exports = await script.evaluate(dom.window);
+
   assert.equal(exports.default, 'with exports?');
   assert.equal(exports.named, 'with exports!');
 });
 
 it('evaluates code multiple times', async () => {
+  const dom1 = new JSDOM('<title>once</title>');
+  const dom2 = new JSDOM('<title>twice</title>');
   const script = new Script(`
     let i = 0;
     export default document.title + '!';
     export const times = ++i;
   `);
-  
-  const dom1 = new JSDOM('<title>once</title>');
-  const dom2 = new JSDOM('<title>twice</title>');
-  
+
   const exports = await Promise.all([
     script.evaluate(dom1.window),
     script.evaluate(dom2.window),
   ]);
+  
   assert.equal(exports[0].default, 'once!');
   assert.equal(exports[1].default, 'twice!');
   assert.equal(exports[1].times, 1);
