@@ -52,10 +52,10 @@ import { Script } from '@zombieland/wichita';
 
 Creates a new Script instance from a file path.
 
-- `filePath` `<string>` Path to a JavaScript file relative to the current file
+- `filePath` `<string>` Absolute path to a JavaScript file
 
 ```js
-const script = new Script('./my-script.js');
+const script = new Script(import.meta.dirname + '/my-script.js');
 ```
 
 #### `new Script(code)`
@@ -74,7 +74,7 @@ const script = new Script(`
 
 Creates a new Script instance with a custom identifier from source code.
 
-- `identifier` `<string>` Script identifier. Used in stack traces.
+- `identifier` `<string>` Script identifier. Used for resolving imports and stack traces.
 - `code` `<string>` JavaScript code to execute
 
 ```js
